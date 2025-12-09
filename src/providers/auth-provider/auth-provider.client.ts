@@ -140,4 +140,51 @@ export const authProviderClient: AuthProvider = {
 
     return { error };
   },
+
+// Damit der Header weiß, wer eingeloggt ist (Name, Avatar, Email), müssen wir dem authProvider die Methode getIdentity hinzufügen.
+
+getIdentity: async () => {
+    // 1. Hole den eingeloggten User aus der Auth-Session
+    const { data: { user } } = await supabaseBrowserClient.auth.getUser();
+
+    if (!user) return null;
+
+    // 2. Hole das Profil aus deiner Tabelle 'profiles'
+    // WICHTIG: Falls deine Tabelle in einem Schema wie 'account' liegt, 
+    // stelle sicher, dass der Supabase Client Zugriff darauf hat oder die Tabelle im public schema gespiegelt ist.
+  const { data: profile } = await supabaseBrowserClient
+      .schema("account")
+      .from("profiles") 
+      .select("avatar, name") // Passe die Spaltennamen an deine DB an
+      .eq("id", user.id)
+      .single();
+
+    // 3. Avatar URL bauen
+    let avatarUrl = user.user_metadata?.avatar_url; // Fallback: Google/GitHub Bild
+
+    if (profile?.avatar) {
+      // Fall A: In der DB steht schon eine volle URL (https://...)
+      if (profile.avatar.startsWith("http")) {
+        avatarUrl = profile.avatar;
+      } 
+      // Fall B: In der DB steht nur der Dateipfad (z.B. "user_123.jpg")
+      else {
+        // Hier musst du den Namen deines Storage Buckets wissen (z.B. 'avatars')
+        const { data } = supabaseBrowserClient
+          .storage
+          .from("avatars") 
+          .getPublicUrl(profile.avatar);
+          
+        avatarUrl = data.publicUrl;
+      }
+    }
+
+    // 4. Rückgabe an Refine (und damit an den Header)
+    return {
+      id: user.id,
+      name: profile?.name || user.email, // Name aus Profil oder Email als Fallback
+      avatar: avatarUrl,
+      email: user.email,
+    };
+  },
 };
