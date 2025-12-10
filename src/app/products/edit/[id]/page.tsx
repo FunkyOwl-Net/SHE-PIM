@@ -35,6 +35,12 @@ export default function ProductEditPage() {
             const currentValues = formProps.form?.getFieldsValue() as any;
             const { specs_items, features_items, tags_list, ...formValues } = currentValues;
 
+            console.log("Speichere Sub-Daten:", {
+                specs: specs_items,
+                features: features_items,
+                tags: tags_list
+            });
+
             // --- NEU: LOGISTIK SPEICHERN ---
             // Wir extrahieren die Logistik-Felder manuell aus dem großen 'formValues' Topf
             const logisticsData = {
@@ -117,30 +123,43 @@ export default function ProductEditPage() {
     // --- DATEN IN DAS FORMULAR LADEN ---
     useEffect(() => {
         if (product && formProps.form) {
-            // Helper
-            const extract = (arr: any, k: string) => Array.isArray(arr) && arr.length > 0 ? arr[ 0 ][ k ] : [];
+            // Helper: Extrahiert das Array oder Objekt sicher
+            const extract = (data: any, k: string) => {
+                if (!data) return [];
+                if (Array.isArray(data)) {
+                    if (data.length === 0) return [];
+                    // Falls mehrere Rows existieren (z.B. Duplikate), nimm die mit Inhalt
+                    const found = data.find((item: any) => item[ k ] && item[ k ].length > 0);
+                    return found ? found[ k ] : data[ 0 ][ k ] || [];
+                }
+                // Falls Supabase ein Objekt (1:1) zurückgibt
+                return data[ k ] || [];
+            };
+
             const extractObj = (data: any) => {
                 if (!data) return {};
                 if (Array.isArray(data)) return data.length > 0 ? data[ 0 ] : {};
                 return data;
             };
 
-            // Logistik-Objekt aus dem Array holen
-            const dbLogistics = extractObj(product.logistics);
+            const specsVal = extract(product.specifications, 'specs');
+            const featuresVal = extract(product.features, 'features_list');
+            const tagsVal = extract(product.tags, 'tags_list');
+            const logisticsVal = extractObj(product.logistics);
 
-            console.log("Supabase Data:", {
-                logisticsRaw: product.logistics,
-                dbLogistics
+            console.log("Form SetFieldsValue Payload:", {
+                specs: specsVal,
+                features: featuresVal,
+                tags: tagsVal,
+                logistics: logisticsVal
             });
 
             formProps.form.setFieldsValue({
                 ...product,
-                specs_items: extract(product.specifications, 'specs'),
-                features_items: extract(product.features, 'features_list'),
-                tags_list: extract(product.tags, 'tags_list'),
-
-                // WICHTIG: Logistik flach hineinkopieren
-                ...dbLogistics
+                specs_items: specsVal,
+                features_items: featuresVal,
+                tags_list: tagsVal,
+                ...logisticsVal
             });
         }
     }, [ product, formProps.form ]);
@@ -210,6 +229,7 @@ export default function ProductEditPage() {
         <Edit saveButtonProps={saveButtonProps} isLoading={isLoading}>
             <Form
                 {...formProps}
+                form={formProps.form}
                 layout="vertical"
                 // Wir brauchen hier keine komplexen initialValues mehr, 
                 // da der useEffect das übernimmt. Nur Defaults setzen:

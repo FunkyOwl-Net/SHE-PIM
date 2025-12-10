@@ -28,7 +28,8 @@
     "js-cookie": "^3.0.5",
     "next": "^16.0.8",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react-dom": "^19.2.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

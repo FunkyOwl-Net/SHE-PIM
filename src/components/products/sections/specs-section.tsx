@@ -5,18 +5,20 @@ import { Form, Input, Button, Card, Row, Col } from "antd";
 import { PlusOutlined, MinusCircleOutlined, TableOutlined, UnorderedListOutlined } from "@ant-design/icons";
 
 export const SpecsSection = () => {
+    // Falls man auf 'form' zugreifen muss (z.B. für Debugging oder Logik)
+    const form = Form.useFormInstance();
+
     return (
         <div style={{ padding: "20px 0" }}>
             <Row gutter={[ 24, 24 ]}>
 
                 {/* --- SEKTION 1: TECHNISCHE DATEN --- */}
-                <Col xs={24} xl={14}>
+                <Col span={24}>
                     <Card title={<><TableOutlined /> Technische Daten</>} variant="borderless">
                         <Form.List name="specs_items">
                             {(fields, { add, remove }) => (
                                 <>
                                     {fields.map(({ key, name, ...restField }) => (
-                                        // WICHTIG: 'key' muss hier am Row-Element stehen
                                         <Row key={key} gutter={8} style={{ marginBottom: 8 }} align="middle">
                                             <Col span={8}>
                                                 <Form.Item
@@ -65,20 +67,16 @@ export const SpecsSection = () => {
                 </Col>
 
                 {/* --- SEKTION 2: FEATURES --- */}
-                <Col xs={24} xl={10}>
+                <Col span={24}>
                     <Card title={<><UnorderedListOutlined /> Funktionen und Features</>} variant="borderless">
                         <Form.List name="features_items">
                             {(fields, { add, remove }) => (
                                 <>
-                                    {/* KORREKTUR HIER:
-                                        Wir nehmen 'key' aus dem Feld-Objekt und setzen es explizit an das div.
-                                        Der Rest (...restField) geht an Form.Item.
-                                    */}
                                     {fields.map(({ key, name, ...restField }) => (
                                         <div key={key} style={{ display: 'flex', marginBottom: 8, alignItems: 'flex-start' }}>
                                             <Form.Item
-                                                {...restField} // Enthält KEIN 'key' mehr
-                                                name={name} // Wichtig: Bei einfachen Arrays ist name der Index
+                                                {...restField}
+                                                name={name}
                                                 validateTrigger={[ 'onChange', 'onBlur' ]}
                                                 rules={[ { required: true, message: "Bitte Text eingeben" } ]}
                                                 noStyle
@@ -86,7 +84,7 @@ export const SpecsSection = () => {
                                                 <Input.TextArea
                                                     placeholder="Feature Beschreibung..."
                                                     autoSize={{ minRows: 1, maxRows: 3 }}
-                                                    style={{ width: '100%', marginRight: 8 }}
+                                                    style={{ flex: 1, marginRight: 8 }}
                                                 />
                                             </Form.Item>
                                             <MinusCircleOutlined

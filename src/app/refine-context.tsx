@@ -20,11 +20,14 @@ import {
     DashboardOutlined,
     ShoppingOutlined,
     UserOutlined,
-    ImportOutlined
+    ImportOutlined,
+    CrownOutlined,
+    FileExcelOutlined
 } from "@ant-design/icons";
 
 import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/sidebar";
+import { accessControlProvider } from "@providers/access-control";
 
 type RefineContextProps = {
     defaultMode: string;
@@ -50,6 +53,7 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                 authProvider={authProviderClient}
                                 dataProvider={dataProvider}
                                 notificationProvider={useNotificationProvider}
+                                accessControlProvider={accessControlProvider}
                                 options={{
                                     syncWithLocation: true,
                                     warnWhenUnsavedChanges: true,
@@ -83,16 +87,49 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                             icon: <ImportOutlined />,
                                         }
                                     },
+                                    // 1. Das "Parent" Element (nur für das Menü)
+                                    {
+                                        name: "admin",
+                                        meta: {
+                                            label: "Administration",
+                                            icon: <CrownOutlined />,
+                                        }
+                                    },
+                                    // 2. Das Dashboard (Übersicht)
+                                    {
+                                        name: "admin_dashboard",
+                                        list: "/admin", // Landingpage
+                                        meta: {
+                                            label: "Übersicht",
+                                            icon: <DashboardOutlined />,
+                                            parent: "admin" // <--- Macht es zum Unterpunkt
+                                        }
+                                    },
+                                    // 3. Benutzerverwaltung (verschoben nach Admin)
                                     {
                                         name: "profiles",
-                                        list: "/profiles",
+                                        list: "/admin/users",
+                                        create: "/admin/users/create",
+                                        edit: "/admin/users/edit/:id",
                                         meta: {
-                                            label: "Benutzer",
+                                            label: "Benutzer & Rollen",
                                             icon: <UserOutlined />,
-                                            schema: "account", // Wie vorhin besprochen für das Schema
-                                            hide: true
+                                            parent: "admin", // <--- Unterpunkt
+                                            schema: "account"
                                         }
-                                    }
+                                    },
+                                    // NEU: Templates Verwaltung
+                                    {
+                                        name: "import_templates",
+                                        list: "/admin/templates",        // Der Link zur Liste
+                                        create: "/admin/templates/create", // Der Link zum Erstellen
+                                        meta: {
+                                            label: "Import Vorlagen",
+                                            icon: <FileExcelOutlined />,
+                                            parent: "admin",             // WICHTIG: Unterpunkt von "Administration"
+                                            schema: "product"            // Liegt im Schema 'product'
+                                        }
+                                    },
                                 ]}
                             >
                                 {/* 4. Die Weiche: */}

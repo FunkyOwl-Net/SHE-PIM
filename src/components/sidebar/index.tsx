@@ -11,6 +11,28 @@ import { ColorModeContext } from "@contexts/color-mode";
 
 const { Sider } = Layout;
 
+// Helper Function for recursive menu rendering
+const renderMenuItems = (items: any[], go: any): any[] => {
+    return items.map((item) => {
+        // If the item has children (Submenu)
+        if (item.children && item.children.length > 0) {
+            return {
+                key: item.key,
+                icon: item.icon,
+                label: item.label,
+                children: renderMenuItems(item.children, go), // Recursion
+            };
+        }
+        // Normal Item
+        return {
+            key: item.key,
+            icon: item.icon,
+            label: item.label,
+            onClick: () => go({ to: item.route ?? "" }),
+        };
+    });
+};
+
 export const AppSidebar = (props: any) => {
     // Destructure props to remove Refine/ThemedLayout specific props that shouldn't be passed to HTML elements
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,12 +48,8 @@ export const AppSidebar = (props: any) => {
     // Determine the selected key for the profile menu
     const selectedProfileKeys = pathname === "/profiles" ? [ "profiles" ] : [];
 
-    const items = menuItems.map((item) => ({
-        key: item.key,
-        icon: item.icon,
-        label: item.label,
-        onClick: () => go({ to: item.route ?? "" }),
-    }));
+    // Use the recursive helper to build the AntD menu items
+    const items = renderMenuItems(menuItems, go);
 
     // If sticky is desired but without overlapping content, we should rely on Layout structure.
     // However, if the user complains it lies OVER the content, we should remove 'fixed' positioning.
