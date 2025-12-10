@@ -16,6 +16,7 @@ export interface IProductData {
     content_images?: IMediaItem[];
     product_videos?: IMediaItem[];
     product_downloads?: IMediaItem[];
+    logistics?: IProductLogistics[]; // Array, da Supabase Relation
 }
 
 export interface IFeatures {
@@ -80,4 +81,29 @@ export interface IMediaItem {
     created_by_name?: string; // NEU: Wer hat es hochgeladen
     is_primary?: boolean; // Nur bei product_images relevant
     category?: string;    // Nur bei Downloads relevant
+}
+
+export interface IProductLogistics {
+    id: string;
+    product_id: string;
+    // Netto
+    net_length_mm?: number;
+    net_width_mm?: number;
+    net_height_mm?: number;
+    net_weight_kg?: number;
+    // Brutto
+    gross_length_mm?: number;
+    gross_width_mm?: number;
+    gross_height_mm?: number;
+    gross_weight_kg?: number;
+    // Master
+    has_master_carton?: boolean;
+    master_length_mm?: number;
+    master_width_mm?: number;
+    master_height_mm?: number;
+    master_weight_kg?: number;
+    master_quantity?: number;
+    // Palette
+    items_per_pallet?: number;
+    pallet_height_mm?: number;
 }

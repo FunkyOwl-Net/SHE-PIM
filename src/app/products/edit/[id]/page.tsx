@@ -12,6 +12,7 @@ import { GeneralTab } from "@/components/products/tabs/general-tab";
 import { MediaTab } from "@/components/products/tabs/media-tab";
 import { SpecsSection } from "@components/products/sections/specs-section";
 import { TagsSection } from "@/components/products/sections/tags-section";
+import { LogisticsTab } from "@/components/products/tabs/logistics-tab";
 
 export default function ProductEditPage() {
     const { id } = useParsed();
@@ -32,8 +33,29 @@ export default function ProductEditPage() {
         // --- SPEICHERN LOGIK (Bleibt wie vorher) ---
         onMutationSuccess: async () => {
             const currentValues = formProps.form?.getFieldsValue() as any;
-            const { specs_items, features_items, tags_list } = currentValues;
+            const { specs_items, features_items, tags_list, ...formValues } = currentValues;
 
+            // --- NEU: LOGISTIK SPEICHERN ---
+            // Wir extrahieren die Logistik-Felder manuell aus dem großen 'formValues' Topf
+            const logisticsData = {
+                product_id: id,
+                net_length_mm: formValues.net_length_mm,
+                net_width_mm: formValues.net_width_mm,
+                net_height_mm: formValues.net_height_mm,
+                net_weight_kg: formValues.net_weight_kg,
+                gross_length_mm: formValues.gross_length_mm,
+                gross_width_mm: formValues.gross_width_mm,
+                gross_height_mm: formValues.gross_height_mm,
+                gross_weight_kg: formValues.gross_weight_kg,
+                has_master_carton: formValues.has_master_carton,
+                master_length_mm: formValues.master_length_mm,
+                master_width_mm: formValues.master_width_mm,
+                master_height_mm: formValues.master_height_mm,
+                master_weight_kg: formValues.master_weight_kg,
+                master_quantity: formValues.master_quantity,
+                items_per_pallet: formValues.items_per_pallet,
+                pallet_height_mm: formValues.pallet_height_mm,
+            };
 
             try {
                 // 1. Specs speichern
@@ -72,6 +94,14 @@ export default function ProductEditPage() {
 
                 if (tagError) throw tagError;
 
+                // NEU: Logistics speichern
+                const { error: logError } = await supabaseBrowserClient
+                    .schema("product")
+                    .from("logistics")
+                    .upsert(logisticsData, { onConflict: 'product_id' });
+
+                if (logError) throw logError;
+
             } catch (e: any) {
                 console.error(e);
                 message.warning("Hauptdaten ok, aber Details fehlgeschlagen: " + e.message);
@@ -84,46 +114,47 @@ export default function ProductEditPage() {
     const isLoading = query?.isLoading;
 
     // --- DATEN IN DAS FORMULAR LADEN ---
+    // --- DATEN IN DAS FORMULAR LADEN ---
     useEffect(() => {
         if (product && formProps.form) {
+            // Helper
+            const extract = (arr: any, k: string) => Array.isArray(arr) && arr.length > 0 ? arr[ 0 ][ k ] : [];
+            const extractObj = (arr: any) => Array.isArray(arr) && arr.length > 0 ? arr[ 0 ] : {};
 
-            // Helper Funktion: Findet die Daten, egal ob Supabase ein Array oder Objekt liefert
-            const extractData = (relation: any, key: string) => {
-                if (!relation) return [];
-                // Fall A: Es ist ein Array (Standard bei 1:n) -> Nimm das erste Element
-                if (Array.isArray(relation)) {
-                    return relation.length > 0 ? relation[ 0 ][ key ] : [];
-                }
-                // Fall B: Es ist ein Objekt (Standard bei 1:1) -> Greif direkt zu
-                return relation[ key ] || [];
-            };
+            // Logistik-Objekt aus dem Array holen
+            const dbLogistics = extractObj(product.logistics);
 
-            const dbSpecs = extractData(product.specifications, 'specs');
-            const dbFeatures = extractData(product.features, 'features_list');
-            const dbTags = extractData(product.tags, 'tags_list'); // Auch Tags extrahieren
+            console.log("Lade Daten:", { dbLogistics });
 
-            console.log("Daten werden ins Formular geladen:", { dbSpecs, dbFeatures, dbTags });
-
-            // Daten ins Formular injizieren
             formProps.form.setFieldsValue({
                 ...product,
-                specs_items: dbSpecs,
-                features_items: dbFeatures,
-                tags_list: dbTags, // NEU: Tags laden
+                specs_items: extract(product.specifications, 'specs'),
+                features_items: extract(product.features, 'features_list'),
+                tags_list: extract(product.tags, 'tags_list'),
+
+                // WICHTIG: Logistik flach hineinkopieren
+                ...dbLogistics
             });
         }
     }, [ product, formProps.form ]);
 
-
     // --- FILTER VOR DEM SENDEN ---
     const handleOnFinish = (values: any) => {
         const {
-            specs_items,
-            features_items,
-            product_images,
-            specifications,
-            features,
-            tags_list,
+            // Virtuelle Felder entfernen
+            specs_items, features_items, tags_list,
+
+            // Relationen entfernen
+            product_images, content_images, product_videos, product_downloads,
+            specifications, features, tags, logistics,
+
+            // NEU: Logistik-Felder entfernen (gehören nicht in productData)
+            net_length_mm, net_width_mm, net_height_mm, net_weight_kg,
+            gross_length_mm, gross_width_mm, gross_height_mm, gross_weight_kg,
+            has_master_carton, master_length_mm, master_width_mm, master_height_mm, master_weight_kg, master_quantity,
+            items_per_pallet, pallet_height_mm,
+
+            // Der Rest geht an die Haupttabelle
             ...mainTableData
         } = values;
 
@@ -149,6 +180,11 @@ export default function ProductEditPage() {
                     </Form.Item>
                 </div>
             ),
+        },
+        {
+            key: "logistics",
+            label: "Logistik & Maße",
+            children: <LogisticsTab />,
         },
         {
             key: "images",
