@@ -1,124 +1,182 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, Select, Checkbox, Row, Col, Card } from "antd";
-import { IProductData } from "@/interfaces/productdata";
+import { useParsed, useInvalidate } from "@refinedev/core";
+import { Form, Tabs, App, Spin } from "antd";
+import { supabaseBrowserClient } from "@/utils/supabase/client";
+import { IProductDetails } from "@/interfaces/productdata";
+
+// Deine Komponenten
+import { GeneralTab } from "@/components/products/tabs/general-tab";
+import { MediaTab } from "@/components/products/tabs/media-tab";
+import { SpecsSection } from "@components/products/sections/specs-section";
+import { TagsSection } from "@/components/products/sections/tags-section";
 
 export default function ProductEditPage() {
-    // 1. Der Hook, der alles macht: Laden, State, Speichern
-    const { formProps, saveButtonProps, query } = useForm<IProductData>({
+    const { id } = useParsed();
+    const invalidate = useInvalidate();
+    const { message } = App.useApp();
+    const [ isLocked, setIsLocked ] = useState(true);
+
+    const { formProps, saveButtonProps, query } = useForm<IProductDetails>({
         resource: "productData",
+        id: id,
         meta: {
-            schema: "product", // WICHTIG: Wieder das Schema angeben
-            select: "*", // Alles laden, damit das Formular gefüllt ist
+            schema: "product",
+            // Wir laden ALLES inklusive der Relationen
+            select: "*, product_images(*), content_images(*), product_videos(*), product_downloads(*), specifications(*), features(*), tags(*)",
         },
-        // Optional: Nach dem Speichern zur Liste zurück
-        redirect: "list",
+        redirect: false,
+
+        // --- SPEICHERN LOGIK (Bleibt wie vorher) ---
+        onMutationSuccess: async () => {
+            const currentValues = formProps.form?.getFieldsValue() as any;
+            const { specs_items, features_items, tags_list } = currentValues;
+
+
+            try {
+                // 1. Specs speichern
+                const { error: specError } = await supabaseBrowserClient
+                    .schema("product")
+                    .from("specifications")
+                    .upsert(
+                        { product_id: id, specs: specs_items || [] },
+                        { onConflict: 'product_id' }
+                    );
+
+                if (specError) throw specError;
+
+                // 2. Features speichern
+                const { error: featError } = await supabaseBrowserClient
+                    .schema("product")
+                    .from("features")
+                    .upsert(
+                        { product_id: id, features_list: features_items || [] },
+                        { onConflict: 'product_id' }
+                    );
+
+                if (featError) throw featError;
+
+                message.success("Alle Daten gespeichert");
+                invalidate({ resource: "productData", id: id, invalidates: [ "detail" ] });
+
+                // NEU: Tags speichern
+                const { error: tagError } = await supabaseBrowserClient
+                    .schema("product")
+                    .from("tags")
+                    .upsert(
+                        { product_id: id, tags_list: tags_list || [] },
+                        { onConflict: 'product_id' }
+                    );
+
+                if (tagError) throw tagError;
+
+            } catch (e: any) {
+                console.error(e);
+                message.warning("Hauptdaten ok, aber Details fehlgeschlagen: " + e.message);
+            }
+        }
     });
 
     // Lade-Status für die UX
-    const productData = query?.data?.data;
+    const product = query?.data?.data;
     const isLoading = query?.isLoading;
+
+    // --- DATEN IN DAS FORMULAR LADEN ---
+    useEffect(() => {
+        if (product && formProps.form) {
+
+            // Helper Funktion: Findet die Daten, egal ob Supabase ein Array oder Objekt liefert
+            const extractData = (relation: any, key: string) => {
+                if (!relation) return [];
+                // Fall A: Es ist ein Array (Standard bei 1:n) -> Nimm das erste Element
+                if (Array.isArray(relation)) {
+                    return relation.length > 0 ? relation[ 0 ][ key ] : [];
+                }
+                // Fall B: Es ist ein Objekt (Standard bei 1:1) -> Greif direkt zu
+                return relation[ key ] || [];
+            };
+
+            const dbSpecs = extractData(product.specifications, 'specs');
+            const dbFeatures = extractData(product.features, 'features_list');
+            const dbTags = extractData(product.tags, 'tags_list'); // Auch Tags extrahieren
+
+            console.log("Daten werden ins Formular geladen:", { dbSpecs, dbFeatures, dbTags });
+
+            // Daten ins Formular injizieren
+            formProps.form.setFieldsValue({
+                ...product,
+                specs_items: dbSpecs,
+                features_items: dbFeatures,
+                tags_list: dbTags, // NEU: Tags laden
+            });
+        }
+    }, [ product, formProps.form ]);
+
+
+    // --- FILTER VOR DEM SENDEN ---
+    const handleOnFinish = (values: any) => {
+        const {
+            specs_items,
+            features_items,
+            product_images,
+            specifications,
+            features,
+            tags_list,
+            ...mainTableData
+        } = values;
+
+        return formProps.onFinish?.(mainTableData);
+    };
+
+    const items = [
+        {
+            key: "general",
+            label: "Allgemeine Daten",
+            children: (
+                <div style={{ padding: "20px 0" }}>
+                    {/* 1. Die allgemeinen Formularfelder (GeneralTab) */}
+                    <GeneralTab
+                        isLocked={isLocked}
+                        onToggleLock={() => setIsLocked(!isLocked)}
+                    />
+
+                    {/* 2. HIER fügen wir die SpecsSection direkt darunter ein */}
+                    <SpecsSection />
+                    <Form.Item name="tags_list" noStyle>
+                        <TagsSection />
+                    </Form.Item>
+                </div>
+            ),
+        },
+        {
+            key: "images",
+            label: "Bilder & Medien",
+            children: (
+                <MediaTab
+                    product={product} // <--- ÄNDERUNG: Ganzes Objekt übergeben
+                    productId={id as string}
+                    onRefresh={() => invalidate({ resource: "productData", id, invalidates: [ "detail" ] })}
+                />
+            ),
+        },
+    ];
 
     return (
         <Edit saveButtonProps={saveButtonProps} isLoading={isLoading}>
             <Form
                 {...formProps}
-                form={formProps.form}
                 layout="vertical"
-                // Initialwerte setzen, falls beim Laden etwas schief geht
+                // Wir brauchen hier keine komplexen initialValues mehr, 
+                // da der useEffect das übernimmt. Nur Defaults setzen:
                 initialValues={{
                     active: true,
-                    eol: false,
-                    ...formProps.initialValues
+                    eol: false
                 }}
+                onFinish={handleOnFinish}
             >
-                {/* Wir nutzen ein Grid für besseres Layout */}
-                <Row gutter={24}>
-
-                    {/* LINKE SPALTE: Hauptdaten */}
-                    <Col xs={24} lg={16}>
-                        <Card title="Basisdaten" bordered={false}>
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="Artikelnummer"
-                                        name="item_no"
-                                        rules={[ { required: true, message: 'Pflichtfeld' } ]}
-                                    >
-                                        <Input disabled={true} />
-                                        {/* Oft darf man die Art.Nr. nicht mehr ändern */}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="EAN"
-                                        name="EAN"
-                                    >
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-
-                            <Form.Item
-                                label="Produktbezeichnung"
-                                name="name"
-                                rules={[ { required: true } ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Beschreibung"
-                                name="description"
-                            >
-                                <Input.TextArea rows={6} />
-                            </Form.Item>
-                        </Card>
-                    </Col>
-
-                    {/* RECHTE SPALTE: Einstellungen & Status */}
-                    <Col xs={24} lg={8}>
-                        <Card title="Status & Kategorie" bordered={false}>
-                            <Form.Item
-                                label="Marke"
-                                name="brand"
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item
-                                        name="active"
-                                        valuePropName="checked"
-                                        label="Sichtbarkeit"
-                                    >
-                                        <Checkbox>Aktiv</Checkbox>
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        name="eol"
-                                        valuePropName="checked"
-                                        label="Lifecycle"
-                                    >
-                                        <Checkbox>End of Life</Checkbox>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-
-                            {/* Beispiel für Kategorien (als Textfeld vorerst) */}
-                            <Form.Item label="Hauptkategorie" name="primaryCat">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Unterkategorie" name="secondaryCat">
-                                <Input />
-                            </Form.Item>
-                        </Card>
-                    </Col>
-                </Row>
+                <Tabs defaultActiveKey="general" items={items} />
             </Form>
         </Edit>
     );

@@ -2,8 +2,10 @@
 
 import React from "react";
 import { List, useTable, EditButton, ShowButton, DeleteButton } from "@refinedev/antd";
-import { Table, Space, Tag } from "antd";
-import { IProductData } from "@/interfaces/productdata"; // Deine Typen
+import { Table, Space, Tag, Avatar } from "antd";
+import { IProductData, IProductImage } from "@/interfaces/productdata"; // Deine Typen
+import { getPublicImageUrl } from "@/utils/product-images";
+import { FileImageOutlined } from "@ant-design/icons";
 
 export default function ProductListPage() {
     // 1. useTable ist der "große Bruder" von useList. 
@@ -12,7 +14,7 @@ export default function ProductListPage() {
         resource: "productData", // Deine Tabelle in Supabase
         meta: {
             schema: "product", // Dein Schema
-            select: "*", // Für die Hauptübersicht laden wir meist alles (oder spezifische Spalten)
+            select: "*, product_images(file_path, is_primary)", // Für die Hauptübersicht laden wir meist alles (oder spezifische Spalten)
         },
         sorters: {
             initial: [
@@ -26,7 +28,45 @@ export default function ProductListPage() {
 
     return (
         <List>
-            <Table {...tableProps} rowKey="id">
+            <Table {...(tableProps as any)} rowKey="id">
+                {/* --- NEUE BILD SPALTE --- */}
+                <Table.Column
+                    title=""
+                    dataIndex="product_images"
+                    width={80}
+                    render={(images: IProductImage[]) => {
+                        // Logik: Finde das Bild mit is_primary === true.
+                        // Wenn keins da ist, nimm das erste (images[0]).
+                        const primaryImage = images?.find(img => img.is_primary) || (images && images.length > 0 ? images[ 0 ] : null);
+
+                        const imageUrl = getPublicImageUrl(primaryImage?.file_path);
+
+                        return (
+                            <Avatar
+                                shape="square"
+                                size={50}
+                                src={imageUrl}
+                                icon={<FileImageOutlined />}
+                                style={{ backgroundColor: "#f5f5f5", verticalAlign: 'middle' }}
+                            />
+                        );
+                    }}
+                />
+
+                {/* Marke */}
+                <Table.Column
+                    dataIndex="brand"
+                    title="Marke"
+                    sorter // Macht die Spalte sortierbar
+                />
+
+                {/* Kategorie */}
+                <Table.Column
+                    dataIndex="primaryCat"
+                    title="Kategorie"
+                    sorter
+                />
+
                 {/* Artikelnummer */}
                 <Table.Column
                     dataIndex="item_no"
@@ -39,12 +79,6 @@ export default function ProductListPage() {
                     dataIndex="name"
                     title="Bezeichnung"
                     sorter
-                />
-
-                {/* EAN */}
-                <Table.Column
-                    dataIndex="EAN"
-                    title="EAN"
                 />
 
                 {/* Status (als hübscher Tag) */}

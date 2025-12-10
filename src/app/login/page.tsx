@@ -9,7 +9,7 @@ const { Title } = Typography;
 
 export default function LoginPage() {
   // 1. Den Login-Hook von Refine holen
-  const { mutate: login, isLoading } = useLogin();
+  const { mutate: login, isPending: isLoading } = useLogin();
 
   // 2. Was passiert, wenn man auf "Login" klickt?
   const onFinish = (values: any) => {

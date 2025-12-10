@@ -21,7 +21,7 @@ export default function DashboardPage() {
       {/* Statistik / KPI Bereich */}
       <Row gutter={[ 16, 16 ]}>
         <Col xs={24} sm={8}>
-          <Card bordered={false} hoverable>
+          <Card variant="borderless" hoverable>
             <Statistic
               title="Aktive Produkte"
               value={128} // Später dynamisch aus DB laden
@@ -31,7 +31,7 @@ export default function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card bordered={false} hoverable>
+          <Card variant="borderless" hoverable>
             <Statistic
               title="Kunden (CRM)"
               value={45}
@@ -40,7 +40,7 @@ export default function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card bordered={false} hoverable>
+          <Card variant="borderless" hoverable>
             <Statistic
               title="Datenblätter erstellt"
               value={12}
@@ -54,7 +54,7 @@ export default function DashboardPage() {
       <Title level={4} style={{ marginTop: "40px" }}>Schnellzugriff</Title>
       <Row gutter={[ 16, 16 ]}>
         <Col xs={24} md={8}>
-          <Card title="Produktmanagement" bordered={false}>
+          <Card title="Produktmanagement" variant="borderless">
             <p>Neue Produkte anlegen oder Bestände pflegen.</p>
             <Button
               type="primary"
@@ -66,7 +66,7 @@ export default function DashboardPage() {
           </Card>
         </Col>
         <Col xs={24} md={8}>
-          <Card title="CSV Import/Export" bordered={false}>
+          <Card title="CSV Import/Export" variant="borderless">
             <p>Massendaten verarbeiten und Templates nutzen.</p>
             <Button onClick={() => go({ to: "/import" })}>
               Zum Import-Wizard

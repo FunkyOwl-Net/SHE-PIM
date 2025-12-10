@@ -6,9 +6,21 @@ export interface IProductData {
     brand: string;
     description: string;
     primaryCat: string;
-    secondaryCat: string;
+    secondCat: string;
     active: boolean;
     eol: boolean;
+    product_images?: IProductImage[]; // Optional array of images
+    specifications?: ISpecifications[]; // Joined specifications relation
+    features?: IFeatures[]; // Joined features relation
+    tags?: IProductTags[]; // Das neue Array
+    content_images?: IMediaItem[];
+    product_videos?: IMediaItem[];
+    product_downloads?: IMediaItem[];
+}
+
+export interface IFeatures {
+    product_id: string;
+    features_list: string[];
 }
 
 //import Jsonb array von Supabase
@@ -26,10 +38,12 @@ export interface ISpecifications {
 
 // Produktbilder aus dem Supabase Bucket
 export interface IProductImage {
-    id: string;           // UUID der Bild-Zeile
-    product_id: string;   // Verknüpfung zum Produkt
-    file_path: string;    // Der Pfad im Bucket (z.B. "3dd4.../NX1LITE-05.png")
-    file_name: string;    // Der Name (z.B. "NX1LITE-05.png")
+    id: string;
+    product_id: string;
+    file_path: string;
+    file_name: string;
+    description?: string;
+    is_primary?: boolean;
 }
 
 export interface IProductDetails extends IProductData {
@@ -46,4 +60,24 @@ export interface IProductSelectOption {
     id: string;      // Die UID (für die Verknüpfung im Hintergrund)
     item_no: string; // Was der User sieht/sucht
     name: string;    // Hilfreich für die Anzeige (z.B. "NX1LITE - Super Produkt")
+}
+
+export interface IProductTags {
+    id: string;
+    product_id: string;
+    tags_list: string[]; // Einfaches String-Array
+}
+
+// Ein Basis-Interface für ALLE Medien-Typen
+export interface IMediaItem {
+    id: string;
+    product_id: string;
+    file_path: string;
+    file_name: string;
+    display_name?: string; // NEU: Der "schöne" Name
+    description?: string;
+    created_at?: string;
+    created_by_name?: string; // NEU: Wer hat es hochgeladen
+    is_primary?: boolean; // Nur bei product_images relevant
+    category?: string;    // Nur bei Downloads relevant
 }

@@ -119,18 +119,7 @@ export const authProviderClient: AuthProvider = {
 
     return null;
   },
-  getIdentity: async () => {
-    const { data } = await supabaseBrowserClient.auth.getUser();
 
-    if (data?.user) {
-      return {
-        ...data.user,
-        name: data.user.email,
-      };
-    }
-
-    return null;
-  },
   onError: async (error) => {
     if (error?.code === "PGRST301" || error?.code === 401) {
       return {

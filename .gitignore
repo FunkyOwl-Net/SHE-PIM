@@ -24,9 +24,15 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # local env files
+# WICHTIG: Niemals Secrets in Git committen!
 .env*.local
+.env
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -34,3 +40,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OS Generated Files (Windows & Mac)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Supabase (Specific generated files if you opt to ignore them)
+# supabase/functions/**/.env
+
+# Refine
+.refine/

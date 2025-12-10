@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";
-import { GitHubBanner } from "@refinedev/core";
 import { RefineContext } from "./refine-context"; // Unser neuer Wrapper
 
 export const metadata: Metadata = {

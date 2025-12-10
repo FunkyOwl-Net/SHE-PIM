@@ -7,7 +7,7 @@ export const supabaseBrowserClient = createBrowserClient(
   SUPABASE_KEY,
   {
     db: {
-      schema: "public",
+      schema: "product",
     },
   }
 );
