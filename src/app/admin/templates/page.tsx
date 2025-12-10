@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { List, useTable, DeleteButton } from "@refinedev/antd";
+import { List, useTable, DeleteButton, EditButton } from "@refinedev/antd";
 import { Table, Space } from "antd";
 
 export default function TemplateListPage() {
@@ -27,8 +27,10 @@ export default function TemplateListPage() {
                     title="Aktionen"
                     render={(_, record: any) => (
                         <Space>
+                            {/* Bearbeiten Button */}
+                            <EditButton hideText size="small" recordItemId={record.id} />
                             {/* Löschen Button */}
-                            <DeleteButton hideText size="small" recordItemId={record.id} />
+                            <DeleteButton hideText size="small" recordItemId={record.id} meta={{ schema: "product" }} />
                         </Space>
                     )}
                 />

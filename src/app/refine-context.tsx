@@ -123,6 +123,7 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                         name: "import_templates",
                                         list: "/admin/templates",        // Der Link zur Liste
                                         create: "/admin/templates/create", // Der Link zum Erstellen
+                                        edit: "/admin/templates/edit/:id", // Der Link zum Bearbeiten
                                         meta: {
                                             label: "Import Vorlagen",
                                             icon: <FileExcelOutlined />,
