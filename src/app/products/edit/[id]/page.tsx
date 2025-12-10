@@ -26,7 +26,7 @@ export default function ProductEditPage() {
         meta: {
             schema: "product",
             // Wir laden ALLES inklusive der Relationen
-            select: "*, product_images(*), content_images(*), product_videos(*), product_downloads(*), specifications(*), features(*), tags(*)",
+            select: "*, product_images(*), content_images(*), product_videos(*), product_downloads(*), specifications(*), features(*), tags(*), logistics(*)",
         },
         redirect: false,
 
@@ -119,12 +119,19 @@ export default function ProductEditPage() {
         if (product && formProps.form) {
             // Helper
             const extract = (arr: any, k: string) => Array.isArray(arr) && arr.length > 0 ? arr[ 0 ][ k ] : [];
-            const extractObj = (arr: any) => Array.isArray(arr) && arr.length > 0 ? arr[ 0 ] : {};
+            const extractObj = (data: any) => {
+                if (!data) return {};
+                if (Array.isArray(data)) return data.length > 0 ? data[ 0 ] : {};
+                return data;
+            };
 
             // Logistik-Objekt aus dem Array holen
             const dbLogistics = extractObj(product.logistics);
 
-            console.log("Lade Daten:", { dbLogistics });
+            console.log("Supabase Data:", {
+                logisticsRaw: product.logistics,
+                dbLogistics
+            });
 
             formProps.form.setFieldsValue({
                 ...product,
