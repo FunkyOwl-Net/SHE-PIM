@@ -62,18 +62,20 @@ export const ColorModeContextProvider: React.FC<
       <ConfigProvider
         theme={{
           token: mode === "light" ? {
-            // --- CATPPUCCIN LATTE (LIGHT) ---
-            colorPrimary: "#1e66f5", // Blue
-            colorBgBase: "#eff1f5", // Base
-            colorText: "#4c4f69", // Text
-            colorTextSecondary: "#5c5f77", // Subtext1
-            colorTextTertiary: "#6c6f85", // Subtext0
-            colorBorder: "#bcc0cc", // Surface1
-            colorSplit: "#ccd0da", // Surface0
-            fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-            borderRadius: 8,
+            // --- MODERN CAPPUCCINO & SAND (LIGHT) ---
+            // Adjusted: Warm Cream Cards & Tables (Not Sterile White)
+            colorPrimary: "#a07855", // Cappuccino Bronze
+            colorBgBase: "#fffdf9", // Warm Cream Base (No longer pure white)
+            colorBgLayout: "#f7f3ef", // Deeper Sand Background
+            colorText: "#4a3b32", // Deep Coffee
+            colorTextSecondary: "#8c7b70", // Latte Gray
+            colorTextTertiary: "#baaca5", // Pale Taupe
+            colorBorder: "#e6dbcf", // Warm Taupe Border
+            colorSplit: "#ede2d6", // Light Beige Split
+            fontFamily: "'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+            borderRadius: 12,
           } : {
-            // --- CATPPUCCIN MOCHA (DARK) ---
+            // --- CATPPUCCIN MOCHA (DARK - UNTOUCHED) ---
             colorPrimary: "#2bb9dcff", // Blue
             colorBgBase: "#1e1e2e", // Base
             colorText: "#cdd6f4", // Text
@@ -87,55 +89,54 @@ export const ColorModeContextProvider: React.FC<
           algorithm: mode === "light" ? defaultAlgorithm : darkAlgorithm,
           components: {
             Layout: {
-              bodyBg: mode === "light" ? "#dce0e8" : "#11111b",
-              headerBg: mode === "light" ? "#e6e9ef" : "#181825",
-              triggerBg: mode === "light" ? "#e6e9ef" : "#181825",
-              // Sider Background - usually handled by Layout.Sider but good to have fallback
-              siderBg: mode === "light" ? "#e6e9ef" : "#181825",
+              bodyBg: mode === "light" ? "#f7f3ef" : "#11111b",
+              headerBg: mode === "light" ? "#fffdf9" : "#181825",
+              triggerBg: mode === "light" ? "#fffdf9" : "#181825",
+              siderBg: mode === "light" ? "linear-gradient(180deg, #fffdf9 0%, #f7f3ef 100%)" : "#181825",
             },
             Menu: {
-              // Latte: Mantle (#e6e9ef) | Mocha: Mantle (#181825)
-              colorBgContainer: mode === "light" ? "#e6e9ef" : "#181825",
+              colorBgContainer: mode === "light" ? "transparent" : "#181825",
+              subMenuItemBg: mode === "light" ? "transparent" : "#11111b",
 
-              // Submenu Background (Recessed depth in Dark Mode)
-              subMenuItemBg: mode === "light" ? "transparent" : "#11111b", // Dark: Crust
+              // Warm Text
+              itemColor: mode === "light" ? "#6d5d53" : "#cdd6f4",
+              itemHoverBg: mode === "light" ? "#ede2d6" : "#313244", // Darker Cream
+              itemHoverColor: mode === "light" ? "#a07855" : "#89b4fa",
 
-              // Standard Item Styles
-              itemColor: mode === "light" ? "#4c4f69" : "#cdd6f4",
-              itemHoverBg: mode === "light" ? "#ccd0da" : "#313244", // Surface0
-              itemHoverColor: mode === "light" ? "#1e66f5" : "#89b4fa", // Primary on hover
+              // Active State: Soft Sand Pill
+              itemSelectedBg: mode === "light" ? "#ede2d6" : "#45475a",
+              itemSelectedColor: mode === "light" ? "#5d4037" : "#89b4fa", // Darker Coffee
 
-              // Selected Item - Solid "Pill" Look (Clean & Premium)
-              // Dark Mode: Surface1 (#45475a) provides better contrast than Surface0 against the dark backgrounds
-              itemSelectedBg: mode === "light" ? "#ffffff" : "#45475a",
-              itemSelectedColor: mode === "light" ? "#1e66f5" : "#89b4fa", // Primary Color
-
-              // Shape
-              itemBorderRadius: 8,
-              itemMarginInline: 8, // Floating effect
+              itemBorderRadius: 12,
+              itemMarginInline: 8,
             },
             Card: {
-              colorBgContainer: mode === "light" ? "#eff1f5" : "#1e1e2e",
-              borderRadiusLG: 12,
-              headerBg: mode === "light" ? "#eff1f5" : "#1e1e2e", // Match Container
+              colorBgContainer: mode === "light" ? "#fffdf9" : "#1e1e2e", // Match Base
+              borderRadiusLG: 16, // Very Soft
+              headerBg: mode === "light" ? "#fffdf9" : "#1e1e2e",
+              boxShadowTertiary: mode === "light" ? "0 4px 24px rgba(160, 120, 85, 0.08)" : "none", // Warmer Shadow
             },
             Table: {
-              colorBgContainer: mode === "light" ? "#eff1f5" : "#1e1e2e",
-              headerBg: mode === "light" ? "#e6e9ef" : "#181825",
-              borderColor: mode === "light" ? "#bcc0cc" : "#45475a",
+              colorBgContainer: mode === "light" ? "#fffdf9" : "#1e1e2e",
+              headerBg: mode === "light" ? "#f0e5da" : "#181825", // Distinct Latte Foam Header
+              borderColor: mode === "light" ? "#e6dbcf" : "#45475a",
+              rowHoverBg: mode === "light" ? "#faf5f0" : "#313244",
             },
             Button: {
-              controlHeight: 38,
-              borderRadius: 6,
-              defaultBg: mode === "light" ? "#ffffff" : "#313244", // Surface0 for dark buttons
-              defaultBorderColor: mode === "light" ? "#bcc0cc" : "#45475a",
+              controlHeight: 40,
+              borderRadius: 8,
+              defaultBg: mode === "light" ? "#fffdf9" : "#313244",
+              defaultBorderColor: mode === "light" ? "#dcd3ca" : "#45475a",
+              defaultColor: mode === "light" ? "#6d5d53" : "#cdd6f4",
             },
             Input: {
-              colorBgContainer: mode === "light" ? "#ffffff" : "#181825",
-              colorBorder: mode === "light" ? "#bcc0cc" : "#45475a",
+              colorBgContainer: mode === "light" ? "#fffdf9" : "#181825",
+              colorBorder: mode === "light" ? "#e0d6ce" : "#45475a",
+              activeBorderColor: mode === "light" ? "#a07855" : "#2bb9dcff",
             },
             Typography: {
-              colorTextHeading: mode === "light" ? "#4c4f69" : "#cdd6f4",
+              colorTextHeading: mode === "light" ? "#3e2b22" : "#cdd6f4",
+              colorTextDescription: mode === "light" ? "#8c7b70" : "#a6adc8",
             }
           }
         }}

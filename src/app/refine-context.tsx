@@ -24,7 +24,8 @@ import {
     CrownOutlined,
     FileExcelOutlined,
     UnorderedListOutlined,
-    SettingOutlined
+    SettingOutlined,
+    CloudUploadOutlined
 } from "@ant-design/icons";
 
 import { Header } from "@/components/header";
@@ -105,6 +106,17 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                         meta: {
                                             label: "CSV Import",
                                             icon: <ImportOutlined />,
+                                            parent: "products_menu"
+                                        }
+                                    },
+                                    // NEU: Media Uploader
+                                    {
+                                        name: "media_upload",
+                                        list: "/products/media-upload",
+                                        meta: {
+                                            label: "Media Upload",
+                                            icon: <CloudUploadOutlined />,
+                                            parent: "products_menu"
                                         }
                                     },
                                     // 1. Das "Parent" Element (nur für das Menü)

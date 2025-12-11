@@ -42,6 +42,78 @@ export const MediaTab: React.FC<MediaTabProps> = ({ product, productId, onRefres
         }
     };
 
+    // --- KATEGORIE WECHSELN LOGIK ---
+    const handleMoveMedia = async (itemIds: string[], sourceCat: string, targetCat: string) => {
+        const tableMap: Record<string, string> = {
+            'images': 'product_images',
+            'content': 'content_images',
+            'videos': 'product_videos',
+            'downloads': 'product_downloads'
+        };
+
+        const sourceTable = tableMap[ sourceCat ];
+        const targetTable = tableMap[ targetCat ];
+
+        if (!sourceTable || !targetTable) return;
+
+        try {
+            let successCount = 0;
+
+            for (const itemId of itemIds) {
+                // 1. Hole den originalen Eintrag
+                const { data: item, error: fetchError } = await supabaseBrowserClient
+                    .schema('product')
+                    .from(sourceTable)
+                    .select('*')
+                    .eq('id', itemId)
+                    .single();
+
+                if (fetchError || !item) {
+                    console.warn(`Item ${itemId} not found`);
+                    continue;
+                }
+
+                // 2. Bereite neuen Eintrag vor (ohne ID, lasse generieren)
+                const { id, created_at, ...itemData } = item;
+
+                // Clean specific fields
+                if (targetTable !== 'product_images') {
+                    delete (itemData as any).is_primary; // Nur product_images hat is_primary
+                }
+
+                // Insert into Target
+                const { error: insertError } = await supabaseBrowserClient
+                    .schema('product')
+                    .from(targetTable)
+                    .insert({
+                        ...itemData,
+                        product_id: productId // Sicherstellen
+                    });
+
+                if (insertError) {
+                    console.error("Insert Error", insertError);
+                    continue;
+                }
+
+                // 3. Lösche aus Source
+                await supabaseBrowserClient
+                    .schema('product')
+                    .from(sourceTable)
+                    .delete()
+                    .eq('id', itemId);
+
+                successCount++;
+            }
+
+            notification.success({ message: `${successCount} Elemente verschoben!` });
+            onRefresh();
+
+        } catch (error: any) {
+            console.error(error);
+            notification.error({ message: "Fehler beim Verschieben", description: error.message });
+        }
+    };
+
     const subTabs = [
         {
             key: 'images',
@@ -53,9 +125,10 @@ export const MediaTab: React.FC<MediaTabProps> = ({ product, productId, onRefres
                     tableName="product_images"
                     bucketFolder="product_images"
                     type="image"
+                    currentCategory="images"
                     onRefresh={onRefresh}
-                    // HIER übergeben wir die Stern-Funktion
                     onSetPrimary={handleSetPrimary}
+                    onMove={(ids: string[], target) => handleMoveMedia(ids, 'images', target)}
                 />
             )
         },
@@ -69,8 +142,9 @@ export const MediaTab: React.FC<MediaTabProps> = ({ product, productId, onRefres
                     tableName="content_images"
                     bucketFolder="content_images"
                     type="image"
+                    currentCategory="content"
                     onRefresh={onRefresh}
-                // Kein onSetPrimary, da Content Bilder kein Hauptbild haben
+                    onMove={(ids: string[], target) => handleMoveMedia(ids, 'content', target)}
                 />
             )
         },
@@ -82,9 +156,11 @@ export const MediaTab: React.FC<MediaTabProps> = ({ product, productId, onRefres
                     items={product?.product_videos}
                     productId={productId}
                     tableName="product_videos"
-                    bucketFolder="videos"
+                    bucketFolder="videos" // Beachte helper Logic
                     type="video"
+                    currentCategory="videos"
                     onRefresh={onRefresh}
+                    onMove={(ids: string[], target) => handleMoveMedia(ids, 'videos', target)}
                 />
             )
         },
@@ -98,7 +174,9 @@ export const MediaTab: React.FC<MediaTabProps> = ({ product, productId, onRefres
                     tableName="product_downloads"
                     bucketFolder="downloads"
                     type="file"
+                    currentCategory="downloads"
                     onRefresh={onRefresh}
+                    onMove={(ids: string[], target) => handleMoveMedia(ids, 'downloads', target)}
                 />
             )
         }

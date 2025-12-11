@@ -1,7 +1,10 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";
-import { RefineContext } from "./refine-context"; // Unser neuer Wrapper
+import { Outfit } from "next/font/google"; // Import Font
+import { RefineContext } from "./refine-context";
+
+const outfit = Outfit({ subsets: [ "latin" ] });
 
 export const metadata: Metadata = {
   title: "Refine PIM",
@@ -22,9 +25,8 @@ export default async function RootLayout({
 
   return (
     <html lang="de">
-      <body>
+      <body className={outfit.className}>
         <Suspense fallback="Lade App...">
-          {/* Wir übergeben alles an den Client Wrapper */}
           <RefineContext defaultMode={defaultMode}>
             {children}
           </RefineContext>

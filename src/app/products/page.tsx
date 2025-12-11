@@ -49,7 +49,7 @@ export default function ProductListPage() {
                                 src={imageUrl}
                                 icon={<FileImageOutlined style={{ color: token.colorTextTertiary }} />}
                                 style={{
-                                    backgroundColor: token.colorFillSecondary, // Adaptiver Background (Dunkel im Darkmode)
+                                    backgroundColor: token.colorFillTertiary, // Use darker fill for contrast
                                     verticalAlign: 'middle',
                                     border: `1px solid ${token.colorBorderSecondary}`
                                 }}

@@ -5,7 +5,7 @@ import React, { useContext } from "react";
 import { useGo, useMenu, useLogout } from "@refinedev/core";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 // Replace ThemedSider with Layout.Sider to avoid "children deprecated" warning from Refine's internal Menu usage
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme, ConfigProvider } from "antd";
 import { usePathname } from "next/navigation";
 import { ColorModeContext } from "@contexts/color-mode";
 
@@ -76,79 +76,94 @@ export const AppSidebar = (props: any) => {
                 overflow: "hidden" // Keine Scrollbar am Sider selbst
             }}
         >
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Menu: {
+                            itemMarginInline: 16,
+                            itemBorderRadius: 8,
+                            itemSelectedBg: `${token.colorPrimary}26`, // 15% opacity for "Subtle" look
+                            itemSelectedColor: token.colorPrimary,
+                            itemHeight: 32,
+                            itemMarginBlock: 4, // Add vertical spacing
+                        }
+                    }
                 }}
             >
-                {/* 1. Logo Area (Optional, falls gewünscht, ansonsten Platzhalter) */}
-                <div style={{ height: "64px", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${token.colorBorderSecondary}` }}>
-                    <div style={{ fontSize: "20px", fontWeight: "bold", color: token.colorPrimary }}>SHE</div>
-                </div>
-
-                {/* 2. Main Menu */}
-                <div style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    paddingTop: "10px",
-                    scrollbarWidth: "none", // Firefox
-                    msOverflowStyle: "none" // IE 10+
-                }}>
-                    <style jsx>{`
-                        div::-webkit-scrollbar {
-                            display: none; /* Chrome/Safari/Webkit */
-                        }
-                    `}</style>
-                    <Menu
-                        mode="inline"
-                        theme={mode === "dark" ? "dark" : "light"}
-                        selectedKeys={[ selectedKey ]}
-                        defaultOpenKeys={defaultOpenKeys}
-                        items={items}
-                        style={{
-                            border: "none",
-                            backgroundColor: "transparent"
-                        }}
-                    />
-                </div>
-
-                {/* 3. Profile / User Area */}
                 <div
                     style={{
-                        borderTop: `1px solid ${token.colorBorderSecondary}`,
-                        padding: "4px 0"
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
                     }}
                 >
-                    <Menu
-                        mode="inline"
-                        theme={mode === "dark" ? "dark" : "light"}
-                        selectedKeys={selectedProfileKeys}
-                        style={{
-                            marginBottom: 0,
-                            border: "none",
-                            backgroundColor: "transparent"
-                        }}
-                        items={[
-                            {
-                                key: "profiles",
-                                icon: <UserOutlined />,
-                                label: "Mein Profil",
-                                onClick: () => go({ to: "/profiles" }),
-                            },
-                            {
-                                key: "logout",
-                                icon: <LogoutOutlined />,
-                                label: "Abmelden",
-                                danger: true,
-                                onClick: () => logout(),
+                    {/* 1. Logo Area (Optional, falls gewünscht, ansonsten Platzhalter) */}
+                    <div style={{ height: "64px", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${token.colorBorderSecondary}` }}>
+                        <div style={{ fontSize: "20px", fontWeight: "bold", color: token.colorPrimary }}>SHE</div>
+                    </div>
+
+                    {/* 2. Main Menu */}
+                    <div style={{
+                        flex: 1,
+                        overflowY: "auto",
+                        paddingTop: "10px",
+                        scrollbarWidth: "none", // Firefox
+                        msOverflowStyle: "none" // IE 10+
+                    }}>
+                        <style jsx>{`
+                            div::-webkit-scrollbar {
+                                display: none; /* Chrome/Safari/Webkit */
                             }
-                        ]}
-                    />
+                        `}</style>
+                        <Menu
+                            mode="inline"
+                            theme={mode === "dark" ? "dark" : "light"}
+                            selectedKeys={[ selectedKey ]}
+                            defaultOpenKeys={defaultOpenKeys}
+                            items={items}
+                            style={{
+                                border: "none",
+                                backgroundColor: "transparent"
+                            }}
+                        />
+                    </div>
+
+                    {/* 3. Profile / User Area */}
+                    <div
+                        style={{
+                            borderTop: `1px solid ${token.colorBorderSecondary}`,
+                            padding: "4px 0"
+                        }}
+                    >
+                        <Menu
+                            mode="inline"
+                            theme={mode === "dark" ? "dark" : "light"}
+                            selectedKeys={selectedProfileKeys}
+                            style={{
+                                marginBottom: 0,
+                                border: "none",
+                                backgroundColor: "transparent"
+                            }}
+                            items={[
+                                {
+                                    key: "profiles",
+                                    icon: <UserOutlined />,
+                                    label: "Mein Profil",
+                                    onClick: () => go({ to: "/profiles" }),
+                                },
+                                {
+                                    key: "logout",
+                                    icon: <LogoutOutlined />,
+                                    label: "Abmelden",
+                                    danger: true,
+                                    onClick: () => logout(),
+                                }
+                            ]}
+                        />
+                    </div>
                 </div>
-            </div>
+            </ConfigProvider>
         </Sider>
     );
 };

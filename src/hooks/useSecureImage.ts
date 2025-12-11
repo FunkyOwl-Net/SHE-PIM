@@ -1,52 +1,22 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { getSignedUrl } from "@/utils/product-images";
+import { supabaseBrowserClient } from "@/utils/supabase/client";
 
 export const useSecureImage = (path: string | undefined) => {
-    const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-    const [fullUrl, setFullUrl] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    if (!path) {
+        return { imageUrl: null, fullUrl: null, loading: false };
+    }
 
-    useEffect(() => {
-        if (!path) {
-            setThumbnailUrl(null);
-            setFullUrl(null);
-            return;
-        }
+    if (path.startsWith("http")) {
+        return { imageUrl: path, fullUrl: path, loading: false };
+    }
 
-        if (path.startsWith("http")) {
-            setThumbnailUrl(path);
-            setFullUrl(path);
-            return;
-        }
-
-        let isMounted = true;
-        
-        const fetchUrls = async () => {
-            setLoading(true);
-            
-            // Parallel Request: einmal Thumbnail (300px), einmal Full
-            const [thumb, full] = await Promise.all([
-                getSignedUrl(path, { width: 300, height: 300, resize: 'cover' }),
-                getSignedUrl(path) // Original
-            ]);
-
-            if (isMounted) {
-                setThumbnailUrl(thumb);
-                setFullUrl(full);
-                setLoading(false);
-            }
-        };
-
-        fetchUrls();
-
-        return () => { isMounted = false; };
-    }, [path]);
+    // Synchronous URL generation for maximum performance in lists
+    const clean = path.startsWith('/') ? path.slice(1) : path;
+    const { data } = supabaseBrowserClient.storage.from("product-assets").getPublicUrl(clean);
+    const url = data.publicUrl;
 
     return { 
-        imageUrl: thumbnailUrl, // Legacy Support, defaults to thumb for list queries
-        fullUrl,
-        loading 
+        imageUrl: url, 
+        fullUrl: url,
+        loading: false 
     };
 };
