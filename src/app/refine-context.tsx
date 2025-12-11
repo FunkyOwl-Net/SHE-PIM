@@ -22,7 +22,9 @@ import {
     UserOutlined,
     ImportOutlined,
     CrownOutlined,
-    FileExcelOutlined
+    FileExcelOutlined,
+    UnorderedListOutlined,
+    SettingOutlined
 } from "@ant-design/icons";
 
 import { Header } from "@/components/header";
@@ -69,14 +71,32 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                         }
                                     },
                                     {
+                                        name: "products_menu",
+                                        meta: {
+                                            label: "Produkte",
+                                            icon: <ShoppingOutlined />,
+                                        }
+                                    },
+                                    {
                                         name: "productData", // Name der Tabelle in Supabase
                                         list: "/products", // URL Pfad (Next.js Route)
                                         create: "/products/create", // URL für "Erstellen" Button
                                         edit: "/products/edit/:id", // URL für Bearbeiten
                                         show: "/products/show/:id", // URL für Detailansicht
                                         meta: {
-                                            label: "Produkte",
-                                            icon: <ShoppingOutlined />,
+                                            label: "Liste",
+                                            icon: <UnorderedListOutlined />, // Icon vom Parent reicht
+                                            parent: "products_menu"
+                                        }
+                                    },
+                                    // NEU: Spreadsheet als Unterpunkt
+                                    {
+                                        name: "product_spreadsheet",
+                                        list: "/products/spreadsheet",
+                                        meta: {
+                                            label: "Spreadsheet",
+                                            parent: "products_menu", // Sortiert sich unter Produkte ein
+                                            icon: <FileExcelOutlined />, // Optional
                                         }
                                     },
                                     {
@@ -131,6 +151,16 @@ export const RefineContext = ({ defaultMode, children }: RefineContextProps) => 
                                             schema: "product"            // Liegt im Schema 'product'
                                         }
                                     },
+                                    // NEU: Einstellungen
+                                    {
+                                        name: "admin_settings",
+                                        list: "/admin/settings",
+                                        meta: {
+                                            label: "Einstellungen",
+                                            icon: <SettingOutlined />,
+                                            parent: "admin"
+                                        }
+                                    }
                                 ]}
                             >
                                 {/* 4. Die Weiche: */}

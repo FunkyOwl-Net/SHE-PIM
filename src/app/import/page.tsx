@@ -2,13 +2,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Select, Upload, Button, Card, Progress, Typography, Alert, List } from "antd";
+import { Select, Upload, Button, Card, Progress, Typography, Alert, List, theme } from "antd";
 import { InboxOutlined, UploadOutlined, FileExcelOutlined } from "@ant-design/icons";
 import { useSelect } from "@refinedev/core";
 import { IImportTemplate } from "@/interfaces/import";
 import { processImport } from "@/utils/import-engine";
 
 export default function ImportPage() {
+    const { token } = theme.useToken();
     const [ selectedTemplateId, setSelectedTemplateId ] = useState<string | null>(null);
     const [ file, setFile ] = useState<File | null>(null);
     const [ uploading, setUploading ] = useState(false);
@@ -119,7 +120,7 @@ export default function ImportPage() {
                         bordered
                         dataSource={logs}
                         renderItem={item => <List.Item>{item}</List.Item>}
-                        style={{ maxHeight: 300, overflow: 'auto', background: '#fff' }}
+                        style={{ maxHeight: 300, overflow: 'auto', background: token.colorBgContainer }}
                     />
                 </div>
             )}

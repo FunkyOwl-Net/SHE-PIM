@@ -9,6 +9,8 @@ export interface IProductData {
     secondCat: string;
     active: boolean;
     eol: boolean;
+    created_at?: string;
+    updated_at?: string;
     product_images?: IProductImage[]; // Optional array of images
     specifications?: ISpecifications[]; // Joined specifications relation
     features?: IFeatures[]; // Joined features relation

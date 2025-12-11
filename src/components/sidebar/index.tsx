@@ -60,13 +60,20 @@ export const AppSidebar = (props: any) => {
     return (
         <Sider
             {...siderProps}
-            width={200}
+            width={240} // Etwas breiter für modernen Look
+            collapsible
+            breakpoint="lg"
             theme={mode === "dark" ? "dark" : "light"}
             style={{
                 ...siderProps.style,
                 borderRight: `1px solid ${token.colorBorderSecondary}`,
-                // Removed 'position: fixed' to fix overlap issue.
-                // Allow parent Layout to manage flow.
+                height: "100vh",
+                position: "sticky",
+                top: 0,
+                left: 0,
+                zIndex: 999,
+                backgroundColor: token.colorBgContainer, // Nutzung von Token
+                overflow: "hidden" // Keine Scrollbar am Sider selbst
             }}
         >
             <div
@@ -77,11 +84,24 @@ export const AppSidebar = (props: any) => {
                     height: "100%",
                 }}
             >
-                {/* 1. Main Menu */}
-                <div style={{ flex: 1, overflowY: "auto", paddingTop: "64px" }}>
-                    {/* Added paddingTop to avoid overlap with Logo/Header if it exists, 
-                        though previously there was no logo rendered in sidebar. 
-                        Adjust based on design. */}
+                {/* 1. Logo Area (Optional, falls gewünscht, ansonsten Platzhalter) */}
+                <div style={{ height: "64px", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${token.colorBorderSecondary}` }}>
+                    <div style={{ fontSize: "20px", fontWeight: "bold", color: token.colorPrimary }}>SHE</div>
+                </div>
+
+                {/* 2. Main Menu */}
+                <div style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    paddingTop: "10px",
+                    scrollbarWidth: "none", // Firefox
+                    msOverflowStyle: "none" // IE 10+
+                }}>
+                    <style jsx>{`
+                        div::-webkit-scrollbar {
+                            display: none; /* Chrome/Safari/Webkit */
+                        }
+                    `}</style>
                     <Menu
                         mode="inline"
                         theme={mode === "dark" ? "dark" : "light"}
@@ -95,10 +115,11 @@ export const AppSidebar = (props: any) => {
                     />
                 </div>
 
-                {/* 2. Profile / User Area */}
+                {/* 3. Profile / User Area */}
                 <div
                     style={{
                         borderTop: `1px solid ${token.colorBorderSecondary}`,
+                        padding: "4px 0"
                     }}
                 >
                     <Menu

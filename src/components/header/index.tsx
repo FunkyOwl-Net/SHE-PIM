@@ -1,16 +1,18 @@
 "use client";
 
 import { useGetIdentity } from "@refinedev/core";
-import { Layout, Space, Typography, Avatar, theme } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { useContext } from "react";
+import { ColorModeContext } from "@/contexts/color-mode";
+import { Layout, Space, Typography, Avatar, theme, Switch } from "antd";
+import { UserOutlined, SunOutlined, MoonOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 const { useToken } = theme;
 
 export const Header = () => {
   const { token } = useToken();
-  // Hier nutzen wir die Daten aus Schritt 1
   const { data: user } = useGetIdentity();
+  const { mode, setMode } = useContext(ColorModeContext);
 
   return (
     <Layout.Header
@@ -27,6 +29,12 @@ export const Header = () => {
       }}
     >
       <Space size="middle">
+        <Switch
+          checkedChildren={<SunOutlined />}
+          unCheckedChildren={<MoonOutlined />}
+          onChange={() => setMode(mode === "light" ? "dark" : "light")}
+          checked={mode === "light"}
+        />
         {user?.name && (
           <Text strong style={{ color: token.colorTextHeading }}>
             {user.name}
