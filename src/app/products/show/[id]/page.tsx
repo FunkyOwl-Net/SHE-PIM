@@ -178,9 +178,9 @@ export default function ProductShowPage() {
 
                         <div style={{ color: token.colorTextSecondary, fontSize: 15 }}>
                             <span style={{ fontWeight: 600, color: token.colorText }}>{product.brand}</span>
-                            <Divider type="vertical" />
+                            <span style={{ borderLeft: `1px solid ${token.colorBorderSecondary}`, margin: "0 8px", height: "1em", display: "inline-block", verticalAlign: "middle" }} />
                             <span>{product.primaryCat}</span>
-                            {product.secondCat && <> <Divider type="vertical" /> {product.secondCat}</>}
+                            {product.secondCat && <> <span style={{ borderLeft: `1px solid ${token.colorBorderSecondary}`, margin: "0 8px", height: "1em", display: "inline-block", verticalAlign: "middle" }} /> {product.secondCat}</>}
                         </div>
                     </div>
                 </div>
@@ -240,8 +240,8 @@ export default function ProductShowPage() {
                     <div style={{ position: 'relative', width: "100%" }}>
                         <Carousel
                             ref={carouselRef}
+                            dotPlacement="bottom"
                             dots={true}
-                            dotPosition="bottom"
                             style={{ paddingBottom: 40 }}
                         >
                             {/* Slide 1 */}
@@ -300,6 +300,6 @@ export default function ProductShowPage() {
                 {tabItems.find(t => t.key === activeTab)?.children}
             </div>
 
-        </div>
+        </div >
     );
 }

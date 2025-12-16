@@ -1,3 +1,4 @@
+import "@ant-design/v5-patch-for-react-19";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";

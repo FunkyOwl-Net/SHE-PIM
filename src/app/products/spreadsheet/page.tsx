@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Select, Button, Typography, message, Card } from 'antd';
+import { Form, Table, Select, Button, Typography, message, Card, theme } from 'antd';
 import { useTable, useSelect } from "@refinedev/antd";
 import { useInvalidate } from "@refinedev/core";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
@@ -9,6 +9,7 @@ import { EditableCell } from "@/components/products/editable-cell";
 import { IMappingField } from "@/interfaces/import";
 
 export default function ProductSpreadsheetPage() {
+    const { token } = theme.useToken();
     const [ form ] = Form.useForm();
     const [ selectedTemplateId, setSelectedTemplateId ] = useState<string | null>(null);
     const [ editingKey, setEditingKey ] = useState('');
@@ -261,36 +262,36 @@ export default function ProductSpreadsheetPage() {
 
     return (
         <div style={{ padding: 24 }}>
-            <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography.Title level={3} style={{ margin: 0 }}>Massenbearbeitung (Spreadsheet)</Typography.Title>
-                <div style={{ display: 'flex', gap: 16 }}>
-                    {selectedTemplateId && !isBulkEditing && (
-                        <Button onClick={startBulkEdit} type="primary">
-                            Alle Einträge bearbeiten
-                        </Button>
-                    )}
-                    {isBulkEditing && (
-                        <div style={{ display: 'flex', gap: 8 }}>
-                            <Button onClick={cancelBulkEdit}>
-                                Abbrechen
+            <Form form={form} component={false}>
+                <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography.Title level={3} style={{ margin: 0 }}>Massenbearbeitung (Spreadsheet)</Typography.Title>
+                    <div style={{ display: 'flex', gap: 16 }}>
+                        {selectedTemplateId && !isBulkEditing && (
+                            <Button onClick={startBulkEdit} type="primary">
+                                Alle Einträge bearbeiten
                             </Button>
-                            <Button onClick={saveAll} type="primary" loading={templatesQuery.isFetching}>
-                                Alle Speichern
-                            </Button>
-                        </div>
-                    )}
-                    <Select
-                        style={{ width: 300 }}
-                        placeholder="Vorlage auswählen zur Ansicht..."
-                        loading={selectProps.loading}
-                        options={selectProps.options}
-                        onChange={setSelectedTemplateId}
-                    />
+                        )}
+                        {isBulkEditing && (
+                            <div style={{ display: 'flex', gap: 8 }}>
+                                <Button onClick={cancelBulkEdit}>
+                                    Abbrechen
+                                </Button>
+                                <Button onClick={saveAll} type="primary" loading={templatesQuery.isFetching}>
+                                    Alle Speichern
+                                </Button>
+                            </div>
+                        )}
+                        <Select
+                            style={{ width: 300 }}
+                            placeholder="Vorlage auswählen zur Ansicht..."
+                            loading={selectProps.loading}
+                            options={selectProps.options}
+                            onChange={setSelectedTemplateId}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {selectedTemplateId ? (
-                <Form form={form} component={false}>
+                {selectedTemplateId ? (
                     <Table
                         components={{ body: { cell: EditableCell } }}
                         bordered
@@ -302,12 +303,12 @@ export default function ProductSpreadsheetPage() {
                         scroll={{ x: 1000 }} // Horizontal scrollbar bei vielen Spalten
                         size="small" // Spreadsheet Look
                     />
-                </Form>
-            ) : (
-                <Card style={{ textAlign: 'center', marginTop: 50 }}>
-                    <Typography.Text type="secondary">Bitte wähle oben eine Import-Vorlage aus, um die Spalten zu konfigurieren.</Typography.Text>
-                </Card>
-            )}
+                ) : (
+                    <Card style={{ textAlign: 'center', marginTop: 50 }}>
+                        <Typography.Text type="secondary">Bitte wähle oben eine Import-Vorlage aus, um die Spalten zu konfigurieren.</Typography.Text>
+                    </Card>
+                )}
+            </Form>
         </div>
     );
 }

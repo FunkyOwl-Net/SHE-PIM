@@ -27,9 +27,19 @@ export default function ProductListPage() {
         },
     });
 
+    // Fix AntD Table pagination deprecation (position -> placement)
+    // AND remove 'columns' from tableProps to avoid conflict with children <Table.Column>
+    const { pagination, columns, ...restTableProps } = tableProps;
+    const fixedPagination = typeof pagination === 'object' ? {
+        ...pagination,
+        position: undefined,
+        placement: (pagination as any).position || 'bottomRight',
+    } : pagination;
+
     return (
         <List>
-            <Table {...(tableProps as any)} rowKey="id">
+            <Table {...(restTableProps as any)} pagination={fixedPagination as any} rowKey="id">
+                {/* ... existing columns ... */}
                 {/* --- NEUE BILD SPALTE --- */}
                 <Table.Column
                     title=""
@@ -108,7 +118,7 @@ export default function ProductListPage() {
                             <ShowButton hideText size="small" recordItemId={record.id} />
 
                             {/* Achtung: Löschen braucht meist die ID (UUID), nicht item_no, 
-                                je nachdem was dein Primary Key in Supabase ist */}
+                                    je nachdem was dein Primary Key in Supabase ist */}
                             <DeleteButton hideText size="small" recordItemId={record.id} />
                         </Space>
                     )}

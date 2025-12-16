@@ -13,7 +13,7 @@ export default function Loading() {
             alignItems: "center",
             background: "rgba(255, 255, 255, 0.5)" // Optional semi-transparent
         }}>
-            <Spin size="large" tip="Lade Daten..." />
+            <Spin size="large" tip="Lade Daten..." fullscreen />
         </div>
     );
 }

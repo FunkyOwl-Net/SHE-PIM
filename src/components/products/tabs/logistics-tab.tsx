@@ -33,7 +33,7 @@ const DimensionsRow = ({ fieldName, label }: { fieldName: number | string, label
 );
 
 // Bessere Helper Komponente, die mit Form.List Field funktioniert
-const DimensionsRowListCompatible = ({ fieldName, prefix, label }: { fieldName: number, prefix: string, label: string }) => (
+const DimensionsRowListCompatible = ({ fieldName, prefix, label }: { fieldName: number | string, prefix: string, label: string }) => (
     <div style={{ marginBottom: 16 }}>
         <Text strong style={{ display: 'block', marginBottom: 8 }}>{label} (L x B x H)</Text>
         <Row gutter={16}>
@@ -91,14 +91,14 @@ const LogisticsUnitCard = ({ field, index, remove, isDefault }: { field: any, in
                 <Col xs={24} lg={12}>
                     <Card type="inner" title="Produkt & Verpackung" size="small">
                         {/* NETTO DATEN */}
-                        <Divider orientation="left" style={{ marginTop: 0 }}>Netto (Produkt pur)</Divider>
+                        <Divider style={{ marginTop: 0 }}>Netto (Produkt pur)</Divider>
                         <DimensionsRowListCompatible fieldName={field.name} prefix="net" label="Abmessungen" />
                         <Form.Item label="Nettogewicht" name={[ field.name, "net_weight_kg" ]}>
                             <InputNumber suffix="kg" style={{ width: '100%' }} min={0} step="0.01" />
                         </Form.Item>
 
                         {/* BRUTTO DATEN */}
-                        <Divider orientation="left">Brutto (Inkl. Verpackung)</Divider>
+                        <Divider>Brutto (Inkl. Verpackung)</Divider>
                         <DimensionsRowListCompatible fieldName={field.name} prefix="gross" label="Abmessungen Verp." />
                         <Form.Item label="Bruttogewicht" name={[ field.name, "gross_weight_kg" ]}>
                             <InputNumber suffix="kg" style={{ width: '100%' }} min={0} step="0.01" />
@@ -149,7 +149,7 @@ const LogisticsUnitCard = ({ field, index, remove, isDefault }: { field: any, in
                         </Form.Item>
 
                         {/* PALETTE */}
-                        <Divider orientation="left"><AppstoreAddOutlined /> Paletten Daten</Divider>
+                        <Divider><AppstoreAddOutlined /> Paletten Daten</Divider>
                         <Row gutter={16}>
                             <Col span={12}>
                                 <Form.Item label="Stück pro Palette" name={[ field.name, "items_per_pallet" ]}>

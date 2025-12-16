@@ -51,7 +51,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ product, features, tag
         <Row gutter={[ 24, 24 ]}>
             {/* LEFT COLUMN: Main Content */}
             <Col xs={24} lg={16}>
-                <Space direction="vertical" size={24} style={{ width: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%" }}>
 
                     {/* Description */}
                     <Card variant="borderless">
@@ -137,12 +137,12 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ product, features, tag
                         </div>
                     </Card>
 
-                </Space>
+                </div>
             </Col>
 
             {/* RIGHT COLUMN: Sidebar Info */}
             <Col xs={24} lg={8}>
-                <Space direction="vertical" size={24} style={{ width: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%" }}>
 
                     {/* Tags */}
                     <Card variant="borderless">
@@ -181,7 +181,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ product, features, tag
                             prefix={<CheckCircleOutlined />}
                         />
                     </Card>
-                </Space>
+                </div>
             </Col>
         </Row>
     );
