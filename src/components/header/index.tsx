@@ -17,7 +17,8 @@ export const Header = () => {
   return (
     <Layout.Header
       style={{
-        backgroundColor: token.colorBgElevated, // Passt sich Light/Dark Mode an
+        // Background handled by globals.css
+
         display: "flex",
         justifyContent: "flex-end", // Rechtsbündig
         alignItems: "center",

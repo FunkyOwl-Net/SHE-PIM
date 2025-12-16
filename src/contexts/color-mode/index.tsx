@@ -52,6 +52,15 @@ export const ColorModeContextProvider: React.FC<
       };
 
       request();
+
+      // Toggle Body Class for CSS targeting
+      if (mode === "dark") {
+        document.body.classList.add("dark");
+        document.body.classList.remove("light");
+      } else {
+        document.body.classList.add("light");
+        document.body.classList.remove("dark");
+      }
     }
   }, [ mode, isMounted ]);
 
@@ -72,60 +81,6 @@ export const ColorModeContextProvider: React.FC<
         mode,
       }}
     >
-      <style jsx global>{`
-        body {
-          background-color: ${themeConfig.token?.colorBgBase};
-          color: ${themeConfig.token?.colorText};
-          transition: background-color 0.3s, color 0.3s;
-        }
-        /* Layout overrides to ensure gapless theming */
-        .ant-layout {
-            background: ${themeConfig.token?.colorBgBase} !important;
-        }
-        /* FORCE Dark Mode Buttons & Text */
-        ${mode === 'dark' ? `
-            /* Fix invisible headers */
-            h1, h2, h3, h4, h5, h6, 
-            .ant-typography,
-            .ant-page-header-heading-title,
-            .ant-pro-layout-content-header-title {
-                color: #cdd6f4 !important;
-            }
-            
-            /* Fix Buttons (Nuclear Option) */
-            .ant-btn {
-                color: #cdd6f4;
-                border-color: #45475a;
-            }
-            
-            /* Default buttons (Action Buttons) */
-            .ant-btn-default, 
-            .ant-btn-default:not(:disabled):not(.ant-btn-primary) {
-                background-color: #313244 !important; /* Surface0 */
-                border-color: #585b70 !important;     /* Surface2 */
-                color: #cdd6f4 !important;
-            }
-            
-            .ant-btn-default:hover, 
-            .ant-btn-default:not(:disabled):not(.ant-btn-primary):hover {
-                background-color: #45475a !important;
-                border-color: #89b4fa !important;
-                color: #89b4fa !important;
-            }
-            
-            /* Icons in buttons */
-            .ant-btn .anticon {
-                color: inherit !important;
-            }
-
-            /* Table Row Actions specifically often use default buttons */
-            .ant-table-wrapper .ant-btn {
-                 background-color: #313244 !important;
-                 border-color: #45475a !important;
-                 color: #cdd6f4 !important;
-            }
-        ` : ''}
-      `}</style>
       <ConfigProvider
         theme={themeConfig}
       >

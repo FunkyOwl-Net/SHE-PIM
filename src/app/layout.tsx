@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import React, { Suspense } from "react";
 import { Outfit } from "next/font/google"; // Import Font
 import { RefineContext } from "./refine-context";
+import "./globals.css"; // --- GLOBAL CSS IMPORT ---
+
 
 const outfit = Outfit({ subsets: [ "latin" ] });
 

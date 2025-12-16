@@ -1,0 +1,154 @@
+/* =========================================
+   GLOBAL THEME VARIABLES & OVERRIDES
+   ========================================= */
+
+/* 1. VARIABLES (The Source of Truth) */
+:root {
+    /* DEFAULT (Light Mode) - Warm Latte */
+    --bg-base: #f7f3ef;
+    --bg-surface: #fffdf9;
+    --text-primary: #4a3b32;
+    --text-secondary: #6c5d53;
+    --border-color: #e6e1db;
+    --primary-color: #1677ff;
+    
+    --input-bg: #ffffff;
+    --button-bg-default: #ffffff;
+    --button-border-default: #d9d9d9;
+    --button-text-default: #4a3b32;
+}
+
+/* 2. DARK MODE OVERRIDES (Catppuccin Mocha) */
+body.dark {
+    --bg-base: #1e1e2e;          /* Base */
+    --bg-surface: #181825;       /* Mantle */
+    --bg-surface-highlight: #313244; /* Surface0 */
+    --text-primary: #cdd6f4;     /* Text */
+    --text-secondary: #bac2de;   /* Subtext1 */
+    --border-color: #45475a;     /* Surface1 */
+    --primary-color: #89b4fa;    /* Blue */
+    
+    --input-bg: #11111b;         /* Crust */
+    --button-bg-default: #313244; /* Surface0 */
+    --button-border-default: #585b70; /* Surface2 */
+    --button-text-default: #cdd6f4;
+}
+
+/* =========================================
+   BASE STYLES
+   ========================================= */
+body {
+    background-color: var(--bg-base) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* =========================================
+   LAYOUT & CONTAINER
+   ========================================= */
+body.dark .ant-layout {
+    background: var(--bg-base) !important;
+}
+
+body.dark .ant-layout-content {
+    background: var(--bg-base) !important;
+}
+
+/* Navbar (Header) & Sidebar should be slightly distinct (Surface/Mantle) */
+body.dark .ant-layout-header {
+    background: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-color); /* Add visual separation */
+}
+
+body.dark .ant-layout-sider,
+body.dark .ant-layout-sider-children,
+body.dark .ant-menu,
+body.dark .ant-menu-sub {
+    background: var(--bg-surface) !important;
+}
+
+body.dark .ant-card,
+body.dark .ant-modal-content,
+body.dark .ant-drawer-content {
+    background-color: var(--bg-surface) !important;
+    border-color: var(--border-color);
+}
+
+/* =========================================
+   TYPOGRAPHY
+   ========================================= */
+body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,
+body.dark .ant-typography,
+body.dark .ant-typography-secondary {
+    color: var(--text-primary) !important;
+}
+
+body.dark .ant-typography-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* =========================================
+   BUTTONS (The Nuclear Option)
+   ========================================= */
+body.dark .ant-btn-default:not(:disabled):not(.ant-btn-primary) {
+    background-color: var(--button-bg-default) !important;
+    border-color: var(--button-border-default) !important;
+    color: var(--button-text-default) !important;
+}
+
+body.dark .ant-btn-default:not(:disabled):not(.ant-btn-primary):hover {
+    background-color: var(--border-color) !important; /* Slightly lighter */
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Table Row Actions */
+body.dark .ant-table-wrapper .ant-btn {
+    background-color: var(--button-bg-default) !important;
+    border-color: var(--button-border-default) !important;
+    color: var(--button-text-default) !important;
+}
+
+body.dark .ant-btn .anticon {
+    color: inherit !important;
+}
+
+/* =========================================
+   INPUTS & FORMS
+   ========================================= */
+body.dark .ant-input,
+body.dark .ant-select-selector,
+body.dark .ant-picker,
+body.dark .ant-input-number {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body.dark .ant-select-arrow {
+    color: var(--text-secondary) !important;
+}
+
+/* =========================================
+   NAVIGATION & BREADCRUMBS
+   ========================================= */
+/* Breadcrumb Text */
+body.dark .ant-breadcrumb,
+body.dark .ant-breadcrumb-link,
+body.dark .ant-breadcrumb-separator {
+    color: var(--text-secondary) !important;
+}
+
+body.dark .ant-breadcrumb-link a {
+    color: var(--text-secondary) !important;
+}
+
+body.dark .ant-breadcrumb-link a:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Last Item (Active) */
+body.dark .ant-breadcrumb > span:last-child .ant-breadcrumb-link {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+}
