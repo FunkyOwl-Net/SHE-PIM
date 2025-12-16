@@ -12,7 +12,7 @@ export default function UserEditPage() {
 
     return (
         <Edit saveButtonProps={saveButtonProps}>
-            <Form {...formProps} layout="vertical">
+            <Form {...formProps} form={formProps.form} layout="vertical">
                 {/* Email anzeigen, aber sperren (da Auth-relevant) */}
                 <Form.Item label="Email" name="email">
                     <Input disabled style={{ color: "#333" }} />

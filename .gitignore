@@ -1,66 +1,87 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# --- Dependencies ---
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
+# --- Next.js / React / Build Output ---
 /.next/
 /out/
-
-# production
 /build
+/dist
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
-.DS_Store
-*.pem
+# --- Environment Variables (SENSITIV - DO NOT COMMIT) ---
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+*.env
 
-# debug
+# --- Testing ---
+/coverage
+.nyc_output
+
+# --- Logs ---
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
-# local env files
-# WICHTIG: Niemals Secrets in Git committen!
-.env*.local
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-
-# vercel
+# --- Vercel ---
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# --- Refine ---
+.refine/
 
-# OS Generated Files (Windows & Mac)
+# --- Tools / Bundlers ---
+.turbo/
+
+# --- IDEs / Editors ---
+# VS Code (Optional: keep extensions.json/launch.json if team-shared, but ignore user settings)
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# Visual Studio
+.vs/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*#
+.history/
+
+# --- Operating System Files ---
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
+
+# Windows
 Thumbs.db
+ehthumbs.db
 Desktop.ini
+$RECYCLE.BIN/
 
-# Editors / IDEs
-.idea/
-.vscode/
-*.swp
-*.swo
-*.sublime-project
-*.sublime-workspace
+# Linux
+.directory
 
-# Supabase (Specific generated files if you opt to ignore them)
-# supabase/functions/**/.env
-
-# Refine
-.refine/
+# --- Supabase ---
+supabase/.temp/

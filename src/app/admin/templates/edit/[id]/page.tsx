@@ -70,7 +70,7 @@ export default function EditTemplatePage() {
 
     return (
         <Edit title="Template Bearbeiten" saveButtonProps={{ ...saveButtonProps, onClick: form?.submit }}>
-            <Form {...formProps} layout="vertical" onFinish={handleSave}>
+            <Form {...formProps} form={formProps.form} layout="vertical" onFinish={handleSave}>
                 <Form.Item label="Template Name" name="name" rules={[ { required: true } ]}>
                     <Input placeholder="z.B. Lieferant Müller Import" />
                 </Form.Item>
