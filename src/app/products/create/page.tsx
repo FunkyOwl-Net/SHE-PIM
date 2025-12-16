@@ -198,6 +198,7 @@ export default function ProductCreatePage() {
         <Create saveButtonProps={{ ...saveButtonProps, onClick: () => formProps.form?.submit() }}>
             <Form
                 {...formProps}
+                form={formProps.form}
                 onFinish={handleOnFinish} // WICHTIG: Hier unser eigener Handler
                 layout="vertical"
                 initialValues={{
