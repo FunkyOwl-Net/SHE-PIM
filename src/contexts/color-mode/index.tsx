@@ -82,23 +82,47 @@ export const ColorModeContextProvider: React.FC<
         .ant-layout {
             background: ${themeConfig.token?.colorBgBase} !important;
         }
-        /* FORCE Dark Mode Buttons */
+        /* FORCE Dark Mode Buttons & Text */
         ${mode === 'dark' ? `
+            /* Fix invisible headers */
+            h1, h2, h3, h4, h5, h6, 
+            .ant-typography,
+            .ant-page-header-heading-title,
+            .ant-pro-layout-content-header-title {
+                color: #cdd6f4 !important;
+            }
+            
+            /* Fix Buttons (Nuclear Option) */
+            .ant-btn {
+                color: #cdd6f4;
+                border-color: #45475a;
+            }
+            
+            /* Default buttons (Action Buttons) */
+            .ant-btn-default, 
             .ant-btn-default:not(:disabled):not(.ant-btn-primary) {
                 background-color: #313244 !important; /* Surface0 */
-                border-color: #45475a !important;     /* Surface1 */
-                color: #cdd6f4 !important;           /* Text */
+                border-color: #585b70 !important;     /* Surface2 */
+                color: #cdd6f4 !important;
             }
+            
+            .ant-btn-default:hover, 
             .ant-btn-default:not(:disabled):not(.ant-btn-primary):hover {
                 background-color: #45475a !important;
                 border-color: #89b4fa !important;
                 color: #89b4fa !important;
             }
+            
+            /* Icons in buttons */
+            .ant-btn .anticon {
+                color: inherit !important;
+            }
+
             /* Table Row Actions specifically often use default buttons */
             .ant-table-wrapper .ant-btn {
-                 background-color: #313244;
-                 border-color: #45475a;
-                 color: #cdd6f4;
+                 background-color: #313244 !important;
+                 border-color: #45475a !important;
+                 color: #cdd6f4 !important;
             }
         ` : ''}
       `}</style>
