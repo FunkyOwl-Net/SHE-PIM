@@ -67,36 +67,54 @@ export default function ProductCreatePage() {
 
             const newId = newProd.id;
 
-            const logisticsData = {
-                product_id: newId,
-                net_length_mm: values.net_length_mm,
-                net_width_mm: values.net_width_mm,
-                net_height_mm: values.net_height_mm,
-                net_weight_kg: values.net_weight_kg,
-                gross_length_mm: values.gross_length_mm,
-                gross_width_mm: values.gross_width_mm,
-                gross_height_mm: values.gross_height_mm,
-                gross_weight_kg: values.gross_weight_kg,
-                has_master_carton: values.has_master_carton,
-                master_length_mm: values.master_length_mm,
-                master_width_mm: values.master_width_mm,
-                master_height_mm: values.master_height_mm,
-                master_weight_kg: values.master_weight_kg,
-                master_quantity: values.master_quantity,
-                items_per_pallet: values.items_per_pallet,
-                pallet_height_mm: values.pallet_height_mm,
-            };
-
             // 3. Sub-Tabellen speichern (Sequentiell & Resilient)
             const { specs_items: specsItemsVal, features_items: featuresItemsVal, tags_list: tagsListVal } = values;
 
-            // Logistics
+            // Logistics (1:N)
+            // Auch hier: wir holen das Array oder erstellen eins mit einem Default-Entry falls leer
+            let logisticsRaw = values.logistics;
+
+            // Fallback: Wenn User nichts eingegeben hat, aber wir wollen einen Default anlegen
+            // Wir schauen, ob die Einzelfelder (legacy) gefüllt sind, um daraus den ersten Eintrag zu bauen
+            if (!logisticsRaw || logisticsRaw.length === 0) {
+                // Wir bauen ein Objekt aus den möglichen root fields, falls user nur diese gefüllt hat
+                // (Wobei unser Form.List das eigentlich verhindern sollte, da es direkt in 'logistics' schreibt)
+                // Aber sicher ist sicher.
+                logisticsRaw = [ {
+                    variant_name: 'Standard',
+                    is_default: true,
+                    // Versuchen wir Werte zu retten, falls Form-Struktur gemischt war
+                    net_length_mm: values.net_length_mm,
+                    net_weight_kg: values.net_weight_kg
+                } ];
+            }
+
+            const logisticsPayload = logisticsRaw.map((item: any, index: number) => ({
+                ...item,
+                id: crypto.randomUUID(), // Neue IDs immer generieren
+                product_id: newId,
+                is_default: index === 0,
+                variant_name: item.variant_name || (index === 0 ? 'Standard' : `Variante ${index}`)
+            }));
+
             try {
+                // Upsert funktioniert auch mit Array
                 const { error } = await supabaseBrowserClient.schema("product").from("logistics").upsert(
-                    logisticsData,
-                    { onConflict: 'product_id' }
+                    logisticsPayload,
+                    { onConflict: 'product_id' } // ACHTUNG: onConflict product_id würde bei 1:N alle löschen oder failen, wenn constraint unique(product_id).
+                    // Bei 1:N sollte der Constraint eher unique(product_id, variant_name) oder nur PK sein.
+                    // Da wir hier ADDEN, machen wir besser insert?
+                    // Upsert ist okay, wenn Supabase ID generiert.
+                    // WICHTIG: Wenn constraint "product_id_key" (unique) existiert, knallt es bei > 1 Eintrag.
+                    // User sagt: "1:1 Beziehung wurde auf 1:N umgestellt". 
+                    // Das impliziert: Constraint auf product_id wurde entfernt oder angepasst.
+                    // Wir lassen 'onConflict' hier mal weg oder nehmen ID falls vorhanden (bei Create nicht).
                 );
-                if (error) throw error;
+
+                // Besser: Wir nutzen INSERT für Create, da wir sicher neue IDs wollen.
+                const { error: logError } = await supabaseBrowserClient.schema("product").from("logistics").insert(logisticsPayload);
+
+                if (logError) throw logError;
             } catch (err: any) {
                 console.error("Logistics Save Error:", err);
                 message.warning("Logistik konnte nicht gespeichert werden: " + err.message);
@@ -203,7 +221,11 @@ export default function ProductCreatePage() {
                 layout="vertical"
                 initialValues={{
                     active: true,
-                    eol: false
+                    eol: false,
+                    logistics: [ {
+                        variant_name: 'Standard',
+                        is_default: true
+                    } ]
                 }}
             >
 

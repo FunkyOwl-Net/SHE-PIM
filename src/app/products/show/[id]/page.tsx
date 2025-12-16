@@ -77,7 +77,7 @@ export default function ProductShowPage() {
     const specs = product.specifications?.[ 0 ]?.specs || [];
     const features = product.features?.[ 0 ]?.features_list || [];
     const tags = product.tags?.[ 0 ]?.tags_list || [];
-    const logistics = Array.isArray(product.logistics) ? product.logistics[ 0 ] : product.logistics;
+    const logistics = product.logistics; // Pass array directly, component handles it
 
     const tabItems = [
         {
@@ -249,17 +249,17 @@ export default function ProductShowPage() {
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                                     <StatWidget title="Artikelnummer" value={product.item_no} icon={<CodeOutlined />} color="#8e44ad" />
                                     <StatWidget title="EAN / GTIN" value={product.EAN || "-"} icon={<BarcodeOutlined />} color={token.colorInfo} />
-                                    <StatWidget title="Netto Gewicht" value={`${logistics?.net_weight_kg || 0} kg`} icon={<InboxOutlined />} color={token.colorWarning} />
+                                    <StatWidget title="Netto Gewicht" value={`${logistics?.[ 0 ]?.net_weight_kg || 0} kg`} icon={<InboxOutlined />} color={token.colorWarning} />
                                     <StatWidget title="Erstellt" value={product.created_at ? new Date(product.created_at).toLocaleDateString() : "-"} icon={<CalendarOutlined />} color={token.colorSuccess} />
                                 </div>
                             </div>
                             {/* Slide 2 */}
                             <div style={{ padding: "4px" }}>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                                    <StatWidget title="Länge (Netto)" value={`${logistics?.net_length_mm || 0} mm`} icon={<ColumnWidthOutlined />} color={token.colorTextSecondary} />
-                                    <StatWidget title="Breite (Netto)" value={`${logistics?.net_width_mm || 0} mm`} icon={<ExpandAltOutlined />} color={token.colorTextSecondary} />
-                                    <StatWidget title="Höhe (Netto)" value={`${logistics?.net_height_mm || 0} mm`} icon={<CompressOutlined />} color={token.colorTextSecondary} />
-                                    <StatWidget title="Master Karton" value={logistics?.has_master_carton ? `${logistics.master_quantity} Stk.` : "Nein"} icon={<AppstoreOutlined />} color={logistics?.has_master_carton ? token.colorPrimary : token.colorTextDisabled} />
+                                    <StatWidget title="Länge (Netto)" value={`${logistics?.[ 0 ]?.net_length_mm || 0} mm`} icon={<ColumnWidthOutlined />} color={token.colorTextSecondary} />
+                                    <StatWidget title="Breite (Netto)" value={`${logistics?.[ 0 ]?.net_width_mm || 0} mm`} icon={<ExpandAltOutlined />} color={token.colorTextSecondary} />
+                                    <StatWidget title="Höhe (Netto)" value={`${logistics?.[ 0 ]?.net_height_mm || 0} mm`} icon={<CompressOutlined />} color={token.colorTextSecondary} />
+                                    <StatWidget title="Master Karton" value={logistics?.[ 0 ]?.has_master_carton ? `${logistics[ 0 ].master_quantity} Stk.` : "Nein"} icon={<AppstoreOutlined />} color={logistics?.[ 0 ]?.has_master_carton ? token.colorPrimary : token.colorTextDisabled} />
                                 </div>
                             </div>
                         </Carousel>

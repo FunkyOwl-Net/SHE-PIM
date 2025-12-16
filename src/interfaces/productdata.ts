@@ -18,7 +18,7 @@ export interface IProductData {
     content_images?: IMediaItem[];
     product_videos?: IMediaItem[];
     product_downloads?: IMediaItem[];
-    logistics?: IProductLogistics[]; // Array, da Supabase Relation
+    logistics?: IProductLogistics[]; // Array, da Supabase Relation 1:N
 }
 
 export interface IFeatures {
@@ -88,6 +88,11 @@ export interface IMediaItem {
 export interface IProductLogistics {
     id: string;
     product_id: string;
+    
+    // Variant Info (NEU)
+    variant_name?: string;
+    is_default?: boolean;
+
     // Netto
     net_length_mm?: number;
     net_width_mm?: number;
