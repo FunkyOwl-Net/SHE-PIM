@@ -22,7 +22,10 @@ export const useProductUpload = () => {
             const { data, error } = await supabaseBrowserClient
                 .storage
                 .from(STORAGE_BUCKET)
-                .upload(path, file, { upsert: false });
+                .upload(path, file, { 
+                    upsert: false,
+                    cacheControl: '31536000' // 1 Jahr Cache für bessere Performance
+                });
 
             if (error) throw error;
 

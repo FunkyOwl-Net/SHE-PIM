@@ -15,7 +15,7 @@ export default function ProductListPage() {
         resource: "productData", // Deine Tabelle in Supabase
         meta: {
             schema: "product", // Dein Schema
-            select: "*, product_images(file_path, is_primary)", // Für die Hauptübersicht laden wir meist alles (oder spezifische Spalten)
+            select: "id, name, item_no, brand, primaryCat, active, product_images(file_path, is_primary)", // Select specific fields for performance
         },
         sorters: {
             initial: [

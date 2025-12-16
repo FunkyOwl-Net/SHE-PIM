@@ -7,9 +7,12 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
-    "build": "refine build",
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine build",
     "start": "refine start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check-all": "npm run lint && npm run typecheck && npm run build",
+    "analyze": "cross-env ANALYZE=true refine build",
     "refine": "refine"
   },
   "dependencies": {
@@ -32,6 +35,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.10",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^24",
     "@types/react": "^19.2.7",
