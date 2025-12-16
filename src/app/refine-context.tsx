@@ -1,8 +1,12 @@
 "use client";
 
+import "./polyfill"; // --- POLYFILL FOR REACT 19 COMPATIBILITY ---
+
 import React from "react";
 // 1. Hook für die URL-Prüfung importieren
 import { usePathname } from "next/navigation";
+
+
 
 import { Refine, GitHubBanner } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";

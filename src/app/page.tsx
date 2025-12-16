@@ -44,7 +44,7 @@ export default function DashboardPage() {
               title={<Text type="secondary">Aktive Produkte</Text>}
               value={128}
               prefix={<ShoppingOutlined style={{ color: token.colorSuccess || '#a6e3a1' }} />} // Green (Catppuccin Green)
-              valueStyle={{ fontWeight: 'bold' }}
+              styles={{ content: { fontWeight: 'bold' } }}
             />
           </Card>
         </Col>
@@ -54,7 +54,7 @@ export default function DashboardPage() {
               title={<Text type="secondary">Kunden (CRM)</Text>}
               value={45}
               prefix={<UserOutlined style={{ color: token.colorInfo || '#89b4fa' }} />} // Blue
-              valueStyle={{ fontWeight: 'bold' }}
+              styles={{ content: { fontWeight: 'bold' } }}
             />
           </Card>
         </Col>
@@ -64,7 +64,7 @@ export default function DashboardPage() {
               title={<Text type="secondary">Datenblätter erstellt</Text>}
               value={12}
               prefix={<FileTextOutlined style={{ color: token.colorWarning || '#f9e2af' }} />} // Yellow
-              valueStyle={{ fontWeight: 'bold' }}
+              styles={{ content: { fontWeight: 'bold' } }}
             />
           </Card>
         </Col>

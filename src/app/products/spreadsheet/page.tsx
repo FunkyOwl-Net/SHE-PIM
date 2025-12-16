@@ -293,6 +293,7 @@ export default function ProductSpreadsheetPage() {
 
                 {selectedTemplateId ? (
                     <Table
+                        rowKey="id"
                         components={{ body: { cell: EditableCell } }}
                         bordered
                         dataSource={tableProps.dataSource}

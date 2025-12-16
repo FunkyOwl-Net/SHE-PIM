@@ -1,10 +1,12 @@
-import "@ant-design/v5-patch-for-react-19";
+import "./polyfill"; // --- REACT 19 POLYFILL ---
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";
 import { Outfit } from "next/font/google"; // Import Font
 import { RefineContext } from "./refine-context";
 import "./globals.css"; // --- GLOBAL CSS IMPORT ---
+
+
 
 
 const outfit = Outfit({ subsets: [ "latin" ] });

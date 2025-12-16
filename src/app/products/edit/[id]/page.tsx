@@ -13,6 +13,7 @@ import { MediaTab } from "@/components/products/tabs/media-tab";
 import { SpecsSection } from "@components/products/sections/specs-section";
 import { TagsSection } from "@/components/products/sections/tags-section";
 import { LogisticsTab } from "@/components/products/tabs/logistics-tab";
+import { HistoryTab } from "@/components/products/tabs/history-tab";
 
 export default function ProductEditPage() {
     const { id } = useParsed();
@@ -244,6 +245,11 @@ export default function ProductEditPage() {
                     onRefresh={() => invalidate({ resource: "productData", id, invalidates: [ "detail" ] })}
                 />
             ),
+        },
+        {
+            key: "history",
+            label: "Änderungshistorie",
+            children: <HistoryTab productId={id as string} />,
         },
     ];
 
